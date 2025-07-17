@@ -27,7 +27,7 @@ jobs:
       - run: |
           pnpm install
           pnpm run test:basic
-  advacned:
+  test-advacned:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -44,7 +44,7 @@ jobs:
       - run: |
           pnpm install
           pnpm run test:advanced
-  e2e:
+  test-e2e:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
