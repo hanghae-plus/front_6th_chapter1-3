@@ -13,37 +13,27 @@
 ### 기본과제
 
 #### equalities
-
 - [ ] shallowEquals 구현 완료
 - [ ] deepEquals 구현 완료
 
 #### hooks
-
 - [ ] useRef 구현 완료
 - [ ] useMemo 구현 완료
 - [ ] useCallback 구현 완료
 - [ ] useDeepMemo 구현 완료
 - [ ] useShallowState 구현 완료
-- [ ] useAutoCallback 구현 완료
 
-#### High Order Components
-
+### High Order Components
 - [ ] memo 구현 완료
 - [ ] deepMemo 구현 완료
 
 ### 심화 과제
 
-#### hooks
-
-- [ ] createObserver를 useSyncExternalStore에 사용하기 적합한 코드로 개선
+- [ ] createObserver를 useSyncExternalStore에 사용하기 적합한 코드로 개선 
 - [ ] useShallowSelector 구현
 - [ ] useStore 구현
 - [ ] useRouter 구현
 - [ ] useStorage 구현
-
-### context
-
-- [ ] ToastContext, ModalContext 개선
 
 ## 과제 셀프회고
 
