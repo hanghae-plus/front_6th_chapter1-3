@@ -8,9 +8,9 @@ export const createObserver = () => {
     listeners.add(fn);
   };
 
-  const unsubscribe = (fn: Listener) => {
-    listeners.delete(fn);
-  };
+  // const unsubscribe = (fn: Listener) => {
+  //   listeners.delete(fn);
+  // };
 
   const notify = () => listeners.forEach((listener) => listener());
 
