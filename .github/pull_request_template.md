@@ -2,7 +2,7 @@
 
 ### 배포 링크
 
-<!--
+<!-- 
 배포 링크를 적어주세요
 예시: https://<username>.github.io/front-6th-chapter1-3/
 
