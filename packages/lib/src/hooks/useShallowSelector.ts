@@ -1,5 +1,5 @@
-import { useRef } from "react";
-import { shallowEquals } from "../equals";
+// import { useRef } from "react";
+// import { shallowEquals } from "../equals";
 
 type Selector<T, S = T> = (state: T) => S;
 

@@ -1,6 +1,6 @@
 import type { RouterInstance } from "../Router";
 import type { AnyFunction } from "../types";
-import { useSyncExternalStore } from "react";
+// import { useSyncExternalStore } from "react";
 import { useShallowSelector } from "./useShallowSelector";
 
 const defaultSelector = <T, S = T>(state: T) => state as unknown as S;
