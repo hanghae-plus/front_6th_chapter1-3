@@ -1,3 +1,25 @@
+const isArray = (value: unknown) => {
+  return Array.isArray(value);
+};
+
+const isObject = (value: unknown) => {
+  return typeof value === "object" && value !== null;
+};
+
+const compareArrays = (a: unknown[], b: unknown[]) => {
+  return a.length === b.length && a.every((item, index) => Object.is(item, b[index]));
+};
+
+const compareObjects = (a: object, b: object) => {
+  const aObj = a as Record<string, unknown>;
+  const bObj = b as Record<string, unknown>;
+
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+
+  return keysA.length === keysB.length && keysA.every((key) => key in bObj && Object.is(aObj[key], bObj[key]));
+};
+
 /**
  * 두 값의 얕은 비교를 수행
  *
@@ -10,49 +32,14 @@ export const shallowEquals = (a: unknown, b: unknown) => {
   if (Object.is(a, b)) return true;
 
   // 둘 다 객체가 아니면 false
-  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
-
-  const isArrayA = Array.isArray(a);
-  const isArrayB = Array.isArray(b);
+  if (!isObject(a) || !isObject(b)) return false;
 
   // 서로다른 타입을 받을 경우 false (ex: a: [], b: {} 인 경우 false)
-  if (isArrayA !== isArrayB) return false;
+  if (isArray(a) !== isArray(b)) return false;
 
   // 둘 다 배열이면 배열 비교
-  if (isArrayA && isArrayB) {
-    if (a.length !== b.length) {
-      return false;
-    }
-
-    for (let i = 0; i < a.length; i++) {
-      if (!Object.is(a[i], b[i])) {
-        return false;
-      }
-    }
-
-    return true;
-  }
+  if (isArray(a) && isArray(b)) return compareArrays(a, b);
 
   // 둘 다 객체면 객체 비교
-  const aObj = a as Record<string, unknown>;
-  const bObj = b as Record<string, unknown>;
-
-  const aKeys = Object.keys(aObj);
-  const bKeys = Object.keys(bObj);
-
-  if (aKeys.length !== bKeys.length) {
-    return false;
-  }
-
-  for (const key of aKeys) {
-    if (!(key in bObj)) {
-      return false;
-    }
-
-    if (!Object.is(aObj[key], bObj[key])) {
-      return false;
-    }
-  }
-
-  return true;
+  return compareObjects(a, b);
 };
