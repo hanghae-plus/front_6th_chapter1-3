@@ -1,3 +1,4 @@
+// main.tsx
 import { App } from "./App";
 import { router } from "./router";
 import { BASE_URL } from "./constants.ts";
