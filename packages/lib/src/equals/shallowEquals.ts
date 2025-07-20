@@ -1,6 +1,4 @@
 export const shallowEquals = (a: unknown, b: unknown): boolean => {
-  // 객체가 다르면 false 리턴
-
   if (Object.is(a, b)) {
     return true;
   }
@@ -9,8 +7,8 @@ export const shallowEquals = (a: unknown, b: unknown): boolean => {
     return false;
   }
 
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
+  const keysA = Object.keys(a as Record<string, unknown>);
+  const keysB = Object.keys(b as Record<string, unknown>);
 
   // 길이가 다르면 false 리턴
   if (keysA.length !== keysB.length) {
