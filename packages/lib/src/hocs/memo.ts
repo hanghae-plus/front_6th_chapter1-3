@@ -1,16 +1,17 @@
-import { createElement, useRef, type FunctionComponent } from "react";
+import { createElement, useRef, type FunctionComponent, type JSX } from "react";
 import { shallowEquals } from "../equals";
 
-export function memo<P extends object>(Component: FunctionComponent<P>, equals = shallowEquals) {
-  const MemoizedComponent = (props: P) => {
+export function memo<P extends object>(Component: FunctionComponent<P>, equals = shallowEquals): FunctionComponent<P> {
+  const MemoizedComponent: FunctionComponent<P> = (props: P) => {
     const prevPropsRef = useRef<P | null>(null);
-    const prevProps = prevPropsRef.current;
+    const prevElementRef = useRef<JSX.Element | null>(null);
 
-    if (prevProps === null || !equals(prevProps, props)) {
+    if (prevPropsRef.current === null || !equals(prevPropsRef.current, props)) {
       prevPropsRef.current = props;
-      return createElement(Component, props);
+      prevElementRef.current = createElement(Component, props);
     }
-    return Component;
+
+    return prevElementRef.current;
   };
 
   return MemoizedComponent;
