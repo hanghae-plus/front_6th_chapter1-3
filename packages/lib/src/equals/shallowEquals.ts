@@ -6,7 +6,7 @@ import type { EqualPredicateFunction } from "./type";
  */
 export const shallowEquals: EqualPredicateFunction = (a: unknown, b: unknown): boolean => {
   // 1. 같은 참조이면 true
-  if (a === b) {
+  if (Object.is(a, b)) {
     return true;
   }
 
