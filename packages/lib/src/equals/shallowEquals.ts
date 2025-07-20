@@ -1,3 +1,5 @@
+import { isArray, isObject } from "../utils/typeCheck";
+
 export const shallowEquals = (a: unknown, b: unknown) => {
   // https://github.com/JiHoon-0330/front_6th_chapter1-3/issues/1
   if (Object.is(a, b)) {
@@ -31,11 +33,3 @@ export const shallowEquals = (a: unknown, b: unknown) => {
 
   return false;
 };
-
-function isArray(a: unknown): a is unknown[] {
-  return Array.isArray(a);
-}
-
-function isObject(a: unknown): a is Record<string, unknown> {
-  return typeof a === "object" && a !== null;
-}
