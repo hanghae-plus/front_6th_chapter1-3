@@ -11,7 +11,7 @@ export const shallowEquals = (a: unknown, b: unknown) => {
   }
 
   if (isArray(a) && isArray(b)) {
-    return a.length === b.length && a.every((value, index) => value === b[index]);
+    return a.length === b.length && a.every((value, index) => Object.is(value, b[index]));
   }
 
   if (isObject(a) && isObject(b)) {
