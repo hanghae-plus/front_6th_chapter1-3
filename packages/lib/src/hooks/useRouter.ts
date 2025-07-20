@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { RouterInstance } from "../Router";
 import type { AnyFunction } from "../types";
 import { useSyncExternalStore } from "react";

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { AnyFunction } from "../types";
 import { useCallback } from "./useCallback";
 import { useRef } from "./useRef";

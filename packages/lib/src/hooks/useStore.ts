@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { createStore } from "../createStore";
 import { useSyncExternalStore } from "react";
 import { useShallowSelector } from "./useShallowSelector";

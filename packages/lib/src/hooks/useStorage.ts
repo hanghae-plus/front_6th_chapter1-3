@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useSyncExternalStore } from "react";
 import type { createStorage } from "../createStorage";
 

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { loadNextProducts, loadProductsAndCategories, ProductList, SearchBar } from "../entities";
 import { PageWrapper } from "./PageWrapper";
+import { shallowEquals } from "@hanghae-plus/lib";
 
 const headerLeft = (
   <h1 className="text-xl font-bold text-gray-900">
@@ -9,6 +10,12 @@ const headerLeft = (
     </a>
   </h1>
 );
+
+// ! test
+
+shallowEquals([1, 2, 3], [1, 2, 3]);
+
+// ! test
 
 // 무한 스크롤 이벤트 등록
 let scrollHandlerRegistered = false;
