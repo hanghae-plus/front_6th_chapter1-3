@@ -11,6 +11,9 @@ import { useState } from "react";
 
 export function useRef<T>(initialValue: T): { current: T } {
   // useState를 이용해서 만들어보세요.
+  // 리액트에서는 각 컴포넌트 인스턴스마다 독립적인 메모리 공간을 관리하고, useState는 그 메모리 공간에 값을 저장해 준다 -> 컴포넌트마다 따로 독립적인 값을 가질 수 있는 이유
+  // 리랜더링할 때마다 초기화로 변경되지 않고, 다른 컴포넌트와도 값이 공유되지 않아서
+  // 이런 점을 이용해 useRef를 구현할 수 있다!
   const [refObject] = useState(() => ({ current: initialValue }));
 
   return refObject;
