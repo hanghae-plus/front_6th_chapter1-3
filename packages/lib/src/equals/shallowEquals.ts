@@ -1,37 +1,47 @@
+// 타입 가드 함수들
+const isNullish = (value: unknown): value is null | undefined => value == null;
+const isArray = (value: unknown): value is unknown[] => Array.isArray(value);
+const isObject = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
+const isSameValue = (a: unknown, b: unknown) => a === b;
+
+// 배열 비교 함수
+const compareArrays = (a: unknown[], b: unknown[]): boolean =>
+  a.length === b.length && a.every((item, index) => item === b[index]);
+
+// 객체 키 비교 함수
+const hasSameKeys = (keysA: string[], keysB: string[]): boolean =>
+  keysA.length === keysB.length && keysA.every((key) => keysB.includes(key));
+
+// 객체 값 비교 함수
+const compareObjectValues =
+  (a: Record<string, unknown>, b: Record<string, unknown>) =>
+  (keys: string[]): boolean =>
+    keys.every((key) => a[key] === b[key]);
+
+// 객체 비교 함수
+const compareObjects = (a: Record<string, unknown>, b: Record<string, unknown>): boolean => {
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+
+  return hasSameKeys(keysA, keysB) && compareObjectValues(a, b)(keysA);
+};
+
+// 메인 shallowEquals 함수
 export const shallowEquals = (a: unknown, b: unknown): boolean => {
   // 기본 타입 비교
-  if (a === b) return true;
-  if (a !== b) return false;
+  if (isSameValue(a, b)) return true;
 
   // null/undefined 체크
-  if (a == null || b == null) return a === b;
+  if (isNullish(a) || isNullish(b)) return a === b;
 
   // 타입이 다른 경우
   if (typeof a !== typeof b) return false;
 
   // 배열 비교
-  if (Array.isArray(a) && Array.isArray(b)) {
-    if (a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) {
-      if (a[i] !== b[i]) return false;
-    }
-    return true;
-  }
+  if (isArray(a) && isArray(b)) return compareArrays(a, b);
 
   // 객체 비교
-  if (typeof a === "object" && typeof b === "object") {
-    const keysA = Object.keys(a as Record<string, unknown>);
-    const keysB = Object.keys(b as Record<string, unknown>);
-
-    if (keysA.length !== keysB.length) return false;
-
-    for (const key of keysA) {
-      if (!keysB.includes(key)) return false;
-      if ((a as Record<string, unknown>)[key] !== (b as Record<string, unknown>)[key]) return false;
-    }
-
-    return true;
-  }
+  if (isObject(a) && isObject(b)) return compareObjects(a, b);
 
   return false;
 };
