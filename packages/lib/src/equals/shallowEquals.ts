@@ -9,7 +9,10 @@ export const shallowEquals = (a: unknown, b: unknown) => {
     if (a.length !== b.length) return false;
 
     for (let i = 0; i < a.length; i++) {
-      if (a[i] !== b[i]) return false;
+      if (Object.is(a[i], b[i])) {
+        continue;
+      }
+      return false;
     }
 
     return true;
@@ -25,7 +28,11 @@ export const shallowEquals = (a: unknown, b: unknown) => {
     for (let i = 0; i < keysA.length; i++) {
       const key = keysA[i];
 
-      if (a[key] !== b[key]) return false;
+      if (Object.is(a[key], b[key])) {
+        continue;
+      }
+
+      return false;
     }
 
     return true;
