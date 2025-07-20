@@ -1,24 +1,4 @@
-const isArray = (value: unknown) => {
-  return Array.isArray(value);
-};
-
-const isObject = (value: unknown) => {
-  return typeof value === "object" && value !== null;
-};
-
-const compareArrays = (a: unknown[], b: unknown[]) => {
-  return a.length === b.length && a.every((item, index) => Object.is(item, b[index]));
-};
-
-const compareObjects = (a: object, b: object) => {
-  const aObj = a as Record<string, unknown>;
-  const bObj = b as Record<string, unknown>;
-
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-
-  return keysA.length === keysB.length && keysA.every((key) => key in bObj && Object.is(aObj[key], bObj[key]));
-};
+import { compareArrays, compareObjects, isArray, isObject } from "../utils";
 
 /**
  * 두 값의 얕은 비교를 수행
