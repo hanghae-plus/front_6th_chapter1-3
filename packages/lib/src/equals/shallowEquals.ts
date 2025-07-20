@@ -1,38 +1,24 @@
-export const shallowEquals = (a: unknown, b: unknown): boolean => {
-  if (typeof a !== typeof b) {
+export function shallowEquals(a: any, b: any): boolean {
+  if (a === b) {
+    return true;
+  }
+
+  const nullish = a == null || b == null;
+  const notObject = typeof a !== "object" || typeof b !== "object";
+  if (nullish || notObject) {
     return false;
   }
 
-  if (typeof a !== "object" || typeof b !== "object" || a == null || b == null) {
-    return a === b;
-  }
-
-  if (Array.isArray(a) && Array.isArray(b)) {
-    if (a.length !== b.length) {
-      return false;
-    }
-
-    return a.every((ai, i) => shallowEquals(ai, b[i]));
-  }
-
-  const aKeys = Object.keys(a) as (keyof typeof a)[];
-  const bKeys = Object.keys(b) as (keyof typeof b)[];
-
-  if (aKeys.length !== bKeys.length) {
+  const [keysA, keysB] = [Object.keys(a), Object.keys(b)];
+  if (keysA.length !== keysB.length) {
     return false;
   }
 
-  if (aKeys.length === 0) {
-    return a === b;
-  }
-
-  const keys = new Set([...aKeys, ...bKeys]);
-
-  for (const key of keys) {
-    if (a[key] !== b[key]) {
+  for (const key of keysA) {
+    if ((a as any)[key] !== (b as any)[key]) {
       return false;
     }
   }
 
   return true;
-};
+}
