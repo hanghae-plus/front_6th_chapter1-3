@@ -1,11 +1,16 @@
-export const shallowEquals = (objA: unknown, objB: unknown): boolean => {
+export const shallowEquals = (a: unknown, b: unknown): boolean => {
   // 객체가 다르면 false 리턴
-  if (typeof objA !== "object" || objA === null || typeof objB !== "object" || objB === null) {
+
+  if (Object.is(a, b)) {
+    return true;
+  }
+
+  if (typeof a !== "object" || a === null || typeof b !== "object" || b === null) {
     return false;
   }
 
-  const keysA = Object.keys(objA);
-  const keysB = Object.keys(objB);
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
 
   // 길이가 다르면 false 리턴
   if (keysA.length !== keysB.length) {
@@ -18,8 +23,8 @@ export const shallowEquals = (objA: unknown, objB: unknown): boolean => {
     const currentKey = keysA[i];
 
     if (
-      !Object.prototype.hasOwnProperty.call(objB, currentKey) ||
-      !Object.is((objA as Record<string, unknown>)[currentKey], (objB as Record<string, unknown>)[currentKey])
+      !Object.prototype.hasOwnProperty.call(b, currentKey) ||
+      !Object.is((a as Record<string, unknown>)[currentKey], (b as Record<string, unknown>)[currentKey])
     ) {
       return false;
     }
