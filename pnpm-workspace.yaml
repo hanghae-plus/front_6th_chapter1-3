@@ -1,6 +1,0 @@
-onlyBuiltDependencies:
-  - esbuild
-  - msw
-
-packages:
-  - packages/*
