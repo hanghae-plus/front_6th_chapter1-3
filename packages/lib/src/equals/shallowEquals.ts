@@ -29,7 +29,7 @@ export const shallowEquals = (a: unknown, b: unknown) => {
   // 키가 같다면 각 값들을 비교
   // 값들을 비교한다고 해당하는 키에 맞는 발류를 가져오는데 타입 에러가 나옴
   for (const key of KeysA) {
-    if (a[key] !== b[key]) return false;
+    if ((a as Record<string, unknown>)[key] !== (b as Record<string, unknown>)[key]) return false;
   }
 
   return true;
