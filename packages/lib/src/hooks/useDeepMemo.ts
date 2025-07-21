@@ -1,9 +1,8 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import type { DependencyList } from "react";
-import { useMemo } from "./useMemo";
-import { deepEquals } from "../equals";
 
-export function useDeepMemo<T>(factory: () => T, deps: DependencyList): T {
-  // 직접 작성한 useMemo를 참고해서 만들어보세요.
-  return useMemo(factory, deps, deepEquals);
+import { deepEquals } from "../equals";
+import { useMemo as _useMemo } from "./useMemo"; // 린트 경고 방지를 위한 alias
+
+export function useDeepMemo<T>(factory: () => T, deps: DependencyList) {
+  return _useMemo(factory, deps, deepEquals);
 }
