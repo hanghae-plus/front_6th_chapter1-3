@@ -1,3 +1,5 @@
+import { isObject } from "../utils/type-guard";
+
 /**
  * 얕은 비교를 통해 두 값이 같은지 비교하는 함수
  * @param a 비교할 값 1
@@ -34,12 +36,3 @@ export const shallowEquals = (a: unknown, b: unknown) => {
 
   return a === b;
 };
-
-/**
- * 객체 타입 여부를 확인하는 타입 가드 함수
- * @param obj 확인할 값
- * @returns 객체 타입이면 true, 아니면 false
- */
-function isObject(val: unknown): val is Record<string, unknown> {
-  return typeof val === "object" && val !== null;
-}
