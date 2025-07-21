@@ -12,7 +12,7 @@
 import { createContext, memo, type PropsWithChildren, useContext, useReducer, useCallback, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { Toast } from "./Toast";
-import { createActions, initialState, toastReducer, type ToastType } from "./toastReducer";
+import { Actions, initialState, toastReducer, type ToastType } from "./toastReducer";
 import { debounce } from "../../utils";
 
 type ShowToast = (message: string, type: ToastType) => void;
@@ -40,7 +40,15 @@ export const useToastState = () => useContext(ToastStateContext);
 
 export const ToastProvider = memo(({ children }: PropsWithChildren) => {
   const [state, dispatch] = useReducer(toastReducer, initialState);
-  const { show, hide } = createActions(dispatch);
+
+  // show/hide 함수를 useCallback으로 메모이제이션
+  const show = useCallback((message: string, type: ToastType) => {
+    dispatch({ type: Actions.SHOW, payload: { message, type } });
+  }, []);
+
+  const hide = useCallback(() => {
+    dispatch({ type: Actions.HIDE });
+  }, []);
 
   // hide 함수에 debounce 적용 (지속성 위한 useMemo)
   const hideAfter = useMemo(() => debounce(hide, DEFAULT_DELAY), [hide]);
