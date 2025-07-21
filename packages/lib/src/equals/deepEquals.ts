@@ -14,9 +14,8 @@ export const deepEquals = (a: unknown, b: unknown): boolean => {
 
   // 배열끼리 비교
   if (Array.isArray(a) && Array.isArray(b)) {
-    return a.every((item, index) => {
-      return deepEquals(b[index], item);
-    });
+    if (a.length !== b.length) return false;
+    return a.every((item, index) => deepEquals(b[index], item));
   }
 
   // 객체끼리 비교, 타입 추론을 위해 if문 한겹 더 씌움

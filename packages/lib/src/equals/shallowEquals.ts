@@ -13,6 +13,7 @@ export const shallowEquals = (a: unknown, b: unknown) => {
 
   // 배열끼리 비교
   if (Array.isArray(a) && Array.isArray(b)) {
+    if (a.length !== b.length) return false;
     return a.every((item, index) => b[index] === item);
   }
 
