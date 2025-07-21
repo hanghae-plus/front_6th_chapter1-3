@@ -1,14 +1,16 @@
 import type { DependencyList } from "react";
-import { shallowEquals } from "../equals";
 import { useRef } from "./useRef";
+import { shallowEquals } from "../equals";
 
-export function useMemo<T>(factory: () => T, _deps: DependencyList, _equals = shallowEquals): T {
-  const memoized = useRef(factory());
-  const prevDeps = useRef(_deps);
+export function useMemo<T>(factory: () => T, deps: DependencyList, _equals = shallowEquals): T | undefined {
+  const memoized = useRef<T | undefined>(undefined);
+  const prevDeps = useRef(deps);
+  const isInitial = useRef(true);
 
-  if (!_equals(prevDeps.current, _deps)) {
+  if (isInitial.current || !_equals(prevDeps.current, deps)) {
+    isInitial.current = false;
     memoized.current = factory();
-    prevDeps.current = _deps;
+    prevDeps.current = deps;
   }
 
   return memoized.current;
