@@ -1,8 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { DependencyList } from "react";
 import { shallowEquals } from "../equals";
+import { useRef } from "./useRef";
 
 export function useMemo<T>(factory: () => T, _deps: DependencyList, _equals = shallowEquals): T {
-  // 직접 작성한 useRef를 통해서 만들어보세요.
-  return factory();
+  // 1. useRef를 통해서 의존성과 factory 결과값을 저장
+  const depsRef = useRef<DependencyList | null>(null);
+  const resultRef = useRef<T | null>(null);
+
+  // 2. 결과값이 없거나 의존성이 변경되었다면 재계산
+  if (resultRef.current === null || !shallowEquals(depsRef.current, _deps)) {
+    depsRef.current = _deps;
+    resultRef.current = factory();
+  }
+
+  // 3. 결과값을 반환 (무조건 계산을 수행하고 결과값을 반환하므로 as T로 변환)
+  return resultRef.current as T;
 }
