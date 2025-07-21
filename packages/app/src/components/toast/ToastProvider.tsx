@@ -9,26 +9,30 @@
  */
 
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, memo, type PropsWithChildren, useContext, useReducer, useCallback, useMemo } from "react";
+import { createContext, memo, type PropsWithChildren, useContext, useReducer } from "react";
 import { createPortal } from "react-dom";
 import { Toast } from "./Toast";
 import { Actions, initialState, toastReducer, type ToastType } from "./toastReducer";
 import { debounce } from "../../utils";
+import { useCallback, useMemo } from "@hanghae-plus/lib/src/hooks";
 
 type ShowToast = (message: string, type: ToastType) => void;
 type Hide = () => void;
 
-// Command 전용 컨텍스트: show / hide 함수 제공 (값이 변하지 않음)
-const ToastCommandContext = createContext<{
+type ToastCommandContext = {
   show: ShowToast;
   hide: Hide;
-}>({
+};
+type ToastStateContext = { message: string; type: ToastType };
+
+// Command 전용 컨텍스트: show / hide 함수 제공 (값이 변하지 않음)
+const ToastCommandContext = createContext<ToastCommandContext>({
   show: () => null,
   hide: () => null,
 });
 
 // State 전용 컨텍스트: message / type 값 제공 (값이 비교적 자주 변함)
-const ToastStateContext = createContext<{ message: string; type: ToastType }>(initialState);
+const ToastStateContext = createContext<ToastStateContext>(initialState);
 
 const DEFAULT_DELAY = 3000;
 
@@ -50,10 +54,8 @@ export const ToastProvider = memo(({ children }: PropsWithChildren) => {
     dispatch({ type: Actions.HIDE });
   }, []);
 
-  // hide 함수에 debounce 적용 (지속성 위한 useMemo)
   const hideAfter = useMemo(() => debounce(hide, DEFAULT_DELAY), [hide]);
 
-  // show 함수는 토스트 띄우고 자동 숨김까지 처리 (useCallback으로 참조 고정)
   const showWithHide: ShowToast = useCallback(
     (...args) => {
       show(...args);
@@ -62,7 +64,6 @@ export const ToastProvider = memo(({ children }: PropsWithChildren) => {
     [show, hideAfter],
   );
 
-  // Provider value 객체도 참조 고정을 위해 useMemo
   const commandValue = useMemo(() => ({ show: showWithHide, hide }), [showWithHide, hide]);
 
   const visible = state.message !== "";
