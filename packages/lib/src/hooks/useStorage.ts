@@ -1,9 +1,9 @@
-// import { useSyncExternalStore } from "react";
+import { useSyncExternalStore } from "react";
 import type { createStorage } from "../createStorage";
 
 type Storage<T> = ReturnType<typeof createStorage<T>>;
 
+// localStorage persist한 상태관리 라이브러리처럼, 스토리지 상태를 동기화 하기 위해 useSyncExternalStore를 사용
 export const useStorage = <T>(storage: Storage<T>) => {
-  // useSyncExternalStore를 사용해서 storage의 상태를 구독하고 가져오는 훅을 구현해보세요.
-  return storage.get();
+  return useSyncExternalStore(storage.subscribe, storage.get);
 };
