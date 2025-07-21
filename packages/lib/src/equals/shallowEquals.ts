@@ -7,7 +7,7 @@ export const shallowEquals = (a: unknown, b: unknown) => {
     return false;
   }
 
-  // null cjfl
+  // null 처리
   if (a === null || b === null) return a === b;
 
   // 3. 객체의 키 개수가 다른 경우 처리
