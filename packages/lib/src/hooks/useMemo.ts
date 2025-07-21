@@ -9,7 +9,7 @@ export function useMemo<T>(factory: () => T, _deps: DependencyList, _equals = sh
   const resultRef = useRef<T | null>(null);
 
   // 2. 결과값이 없거나 의존성이 변경되었다면 재계산
-  if (resultRef.current === null || !shallowEquals(depsRef.current, _deps)) {
+  if (resultRef.current === null || !_equals(depsRef.current, _deps)) {
     depsRef.current = _deps;
     resultRef.current = factory();
   }
