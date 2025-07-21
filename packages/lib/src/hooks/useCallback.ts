@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars,@typescript-eslint/no-unsafe-function-type */
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import type { DependencyList } from "react";
 
 export function useCallback<T extends Function>(factory: T, _deps: DependencyList) {
