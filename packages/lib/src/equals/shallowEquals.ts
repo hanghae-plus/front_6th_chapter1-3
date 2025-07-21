@@ -1,4 +1,4 @@
-import { compareArrays, compareObjects, isArray, isObject } from "../utils";
+import { compareArrays, compareObjects, dispatchWithCondition, isArray, isObject } from "../utils";
 
 /**
  * 두 값의 얕은 비교를 수행
@@ -8,18 +8,16 @@ import { compareArrays, compareObjects, isArray, isObject } from "../utils";
  * - 중첩된 구조를 깊게 비교하지 않아야 한다
  */
 export const shallowEquals = (a: unknown, b: unknown) => {
-  // 두 값이 정확히 같은지 확인 (참조가 같은 경우)
-  if (Object.is(a, b)) return true;
-
-  // 둘 다 객체가 아니면 false
-  if (!isObject(a) || !isObject(b)) return false;
-
-  // 서로다른 타입을 받을 경우 false (ex: a: [], b: {} 인 경우 false)
-  if (isArray(a) !== isArray(b)) return false;
-
-  // 둘 다 배열이면 배열 비교
-  if (isArray(a) && isArray(b)) return compareArrays(a, b);
-
-  // 둘 다 객체면 객체 비교
-  return compareObjects(a, b);
+  return dispatchWithCondition<[typeof a, typeof b], boolean>(
+    // 두 값이 정확히 같은지 확인 (참조가 같은 경우)
+    [([a, b]) => Object.is(a, b), () => true],
+    // 둘 다 객체가 아니면 false
+    [([a, b]) => !isObject(a) || !isObject(b), () => false],
+    // 서로 다른 타입을 받을 경우 false (ex: a: [], b: {} 인 경우 false)
+    [([a, b]) => isArray(a) !== isArray(b), () => false],
+    // 둘 다 배열이면 배열 비교
+    [([a, b]) => isArray(a) && isArray(b), ([a, b]) => compareArrays(a as unknown[], b as unknown[])],
+    // 둘 다 객체면 객체 비교
+    ([a, b]) => compareObjects(a as object, b as object),
+  )([a, b]);
 };
