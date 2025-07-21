@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import type { DependencyList } from "react";
 import { useMemo } from "./useMemo";
 
