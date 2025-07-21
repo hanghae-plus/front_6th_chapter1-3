@@ -2,7 +2,9 @@ import { useRef, useState } from "react";
 import { useCallback } from "./useCallback";
 import { shallowEquals } from "../equals";
 
-export const useShallowState = <T>(initialValue: Parameters<typeof useState<T>>[0]) => {
+type InitialState<T> = T | (() => T);
+
+export const useShallowState = <T>(initialValue: InitialState<T>) => {
   const [state, _setState] = useState<T | undefined>(initialValue);
   const curState = useRef<T>(state); //setState 메모이제이션용. state를 의존해서는 안됨. -> 매번 리렌더링 됨
 
