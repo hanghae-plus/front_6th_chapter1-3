@@ -1,4 +1,4 @@
-export function shallowEquals(a: unknown, b: unknown): boolean {
+export const shallowEquals = (a: unknown, b: unknown): boolean => {
   // 참조가 같으면(같은 메모리 주소를 가르키면
   if (a === b) return true;
 
@@ -8,11 +8,11 @@ export function shallowEquals(a: unknown, b: unknown): boolean {
   // 타입이 다르면 false
   if (typeof a !== typeof b) return false;
 
-  // 객체가 아닌 경우 값 비교 (원시타입일 경우 처리)
+  // 객체가 아닌 경우 값 비교
   if (typeof a !== "object") return a === b;
 
   // 배열인 경우
-  //두 값의 길이가 다르고, 각 요소를 얕은 비교합니다.
+  //두 값의 길이가 다르고, 각 요소를 얕은 비교
 
   if (Array.isArray(a) && Array.isArray(b)) {
     if (a.length !== b.length) return false;
@@ -29,4 +29,4 @@ export function shallowEquals(a: unknown, b: unknown): boolean {
 
   // 최상위 레벨의 값만 비교
   return keysA.every((key) => objA[key] === objB[key]);
-}
+};
