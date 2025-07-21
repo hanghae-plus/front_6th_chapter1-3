@@ -1,4 +1,4 @@
-type Primitive = string | number | boolean | null | undefined | bigint | symbol;
+import { getObjectKeys, isArray, isObject, isPrimitive } from "./utils";
 
 export const shallowEquals = (a: unknown, b: unknown) => {
   if (typeof a !== typeof b) return false;
@@ -32,11 +32,3 @@ export const shallowEquals = (a: unknown, b: unknown) => {
 
   return a === b;
 };
-
-const isArray = (value: unknown): value is unknown[] => Array.isArray(value);
-
-const isObject = (value: unknown): value is object => typeof value === "object" && value !== null;
-
-const isPrimitive = (value: unknown): value is Primitive => typeof value !== "object" || value === null;
-
-const getObjectKeys = <T extends object>(o: T): (keyof T)[] => Object.keys(o) as (keyof T)[];
