@@ -9,6 +9,5 @@ import { useMemo } from "./useMemo";
 // - React.memo와 함께 사용하여 컴포넌트의 불필요한 리렌더링을 방지할 수 있습니다.
 // 정신 차리고 나서 한번 더 봐야 할 곳
 export function useCallback<T extends Function>(factory: T, deps: DependencyList): T {
-  // 직접 작성한 useMemo를 통해서 만들어보세요.
   return useMemo(() => factory, deps);
 }
