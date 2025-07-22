@@ -1,4 +1,4 @@
-import { type FunctionComponent, type ReactNode } from "react";
+import { createElement, type FunctionComponent, type ReactNode } from "react";
 import { shallowEquals } from "../equals";
 import { useRef } from "../hooks";
 
@@ -9,7 +9,7 @@ export function memo<P extends object>(Component: FunctionComponent<P>, equals =
 
     if (prevProps.current === null) {
       prevProps.current = props;
-      prevResult.current = Component(props);
+      prevResult.current = createElement(Component, props);
       return prevResult.current;
     }
 
@@ -18,7 +18,7 @@ export function memo<P extends object>(Component: FunctionComponent<P>, equals =
     }
 
     prevProps.current = props;
-    prevResult.current = Component(props);
+    prevResult.current = createElement(Component, props);
     return prevResult.current;
   };
 }
