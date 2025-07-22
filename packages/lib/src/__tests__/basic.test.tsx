@@ -46,7 +46,7 @@ describe("Chapter 1-3 기본과제: hooks 구현하기 > ", () => {
       });
     });
 
-    describe.only("deepEquals 함수", () => {
+    describe("deepEquals 함수", () => {
       it("기본 타입 값들을 정확히 비교해야 한다", () => {
         expect(deepEquals(1, 1)).toBe(true);
         expect(deepEquals("안녕", "안녕")).toBe(true);
@@ -97,7 +97,7 @@ describe("Chapter 1-3 기본과제: hooks 구현하기 > ", () => {
       useMemo: React.useMemo,
     },
   ])("$spec > ", ({ useRef, useCallback, useMemo }) => {
-    describe("useRef 훅", () => {
+    describe.only("useRef 훅", () => {
       it("리렌더링이 되어도 useRef의 참조값이 유지된다. ", () => {
         const refs = new Set();
 
