@@ -2,8 +2,6 @@ import { useSyncExternalStore } from "react";
 import type { createStore } from "../createStore";
 import type { Selector } from "../types";
 import { useShallowSelector } from "./useShallowSelector";
-import { shallowEquals } from "../equals";
-import { useRef } from "./useRef";
 
 type Store<T> = ReturnType<typeof createStore<T>>;
 
@@ -17,10 +15,11 @@ const defaultSelector = <T, S = T>(state: T) => state as unknown as S;
  * @returns 선택된 스토어의 상태
  */
 export const useStore = <T, S = T>(store: Store<T>, selector: (state: T) => S = defaultSelector<T, S>) => {
-  const prevSelectedState = useRef<S | undefined>(undefined);
+  const shallowSelector: Selector<T, S> = useShallowSelector(selector);
 
   // ? 얘가 하는 일이 대체 뭐야? 왜 필요한거지? 반환값도 안 쓰면서?
-  useSyncExternalStore(subscribe, getSnapshot);
+  // -> 애초에 snapshot을 가져올 때 selector 함수를 적용한다.
+  const selectedSnapshot = useSyncExternalStore(subscribe, getSelectedSnapshot);
 
   // 스토어를 구독하고 해지함수를 반환하는 함수
   function subscribe(onStoreChange: () => void): () => void {
@@ -29,18 +28,9 @@ export const useStore = <T, S = T>(store: Store<T>, selector: (state: T) => S = 
   }
 
   // 스토어의 상태를 가져오는 함수
-  function getSnapshot() {
-    const state = store.getState();
-    const selected = selector(state);
-
-    if (prevSelectedState.current === undefined || !shallowEquals(prevSelectedState.current, selected)) {
-      prevSelectedState.current = selected;
-    }
-
-    return prevSelectedState.current;
+  function getSelectedSnapshot() {
+    return shallowSelector(store.getState());
   }
 
-  const shallowSelector: Selector<T, S> = useShallowSelector(selector);
-
-  return shallowSelector(store.getState());
+  return selectedSnapshot;
 };

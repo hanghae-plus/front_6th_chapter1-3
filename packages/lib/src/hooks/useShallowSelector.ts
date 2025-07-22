@@ -1,3 +1,6 @@
+import { shallowEquals } from "../equals";
+import { useRef } from "./useRef";
+
 export type Selector<T, S = T> = (state: T) => S;
 
 /**
@@ -8,19 +11,17 @@ export type Selector<T, S = T> = (state: T) => S;
  */
 export const useShallowSelector = <T, S = T>(selector: Selector<T, S>) => {
   // 이전 상태를 저장하고, shallowEquals를 사용하여 상태가 변경되었는지 확인하는 훅을 구현합니다.
-  // const prevState = useRef<S | null>(null);
+  const prevState = useRef<S | null>(null);
 
-  return (state: T): S => selector(state);
+  return (state: T): S => {
+    if (prevState.current === null) {
+      prevState.current = selector(state);
+    }
 
-  // return (state: T): S => {
-  //   if (prevState.current === null) {
-  //     prevState.current = selector(state);
-  //   }
+    if (!shallowEquals(prevState.current, selector(state))) {
+      prevState.current = selector(state);
+    }
 
-  //   if (!shallowEquals(prevState.current, selector(state))) {
-  //     prevState.current = selector(state);
-  //   }
-
-  //   return prevState.current;
-  // };
+    return prevState.current;
+  };
 };
