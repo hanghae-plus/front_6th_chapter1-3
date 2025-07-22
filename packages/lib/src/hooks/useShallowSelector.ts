@@ -18,10 +18,11 @@ export function useShallowSelector<T, S = T>(selector: Selector<T, S>) {
   const prevResultRef = useRef<S>();
 
   return (state: T): S => {
-    if (prevStateRef.current !== undefined && shallowEquals(prevStateRef.current, state)) {
-      return prevResultRef.current!;
-    }
     const result = selector(state);
+
+    if (prevResultRef.current !== undefined && shallowEquals(prevResultRef.current, result)) {
+      return prevResultRef.current;
+    }
 
     prevStateRef.current = state;
     prevResultRef.current = result;
