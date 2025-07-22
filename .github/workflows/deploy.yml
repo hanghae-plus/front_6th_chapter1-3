@@ -1,0 +1,58 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # 또는 master 등 기본 브랜치명
+
+# 워크플로우가 GitHub Pages에 배포할 수 있도록 권한을 설정합니다.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  # 빌드 잡
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22' # .nvmrc 파일과 버전을 맞춥니다.
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10 # package.json의 pnpm 버전과 맞춥니다.
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build application
+        # packages/app 앱을 빌드합니다.
+        run: pnpm --filter @hanghae-plus/shopping build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        # 빌드 결과물(packages/app/dist)을 업로드합니다.
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: packages/app/dist
+
+  # 배포 잡
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
