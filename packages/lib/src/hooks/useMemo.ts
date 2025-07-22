@@ -3,6 +3,14 @@ import type { DependencyList } from "react";
 import { shallowEquals } from "../equals";
 import { useRef } from "./useRef";
 
+/**
+ * factory 함수와 의존성 배열, 비교 함수를 받아, 의존성 변경 시에만 결과값을 갱신하는 커스텀 훅
+ *
+ * @param factory 결과값을 생성하는 함수
+ * @param _deps 의존성 배열
+ * @param _equals 의존성 비교 함수(기본값: shallowEquals)
+ * @returns 의존성(_equals 기준)이 변경될 때만 결과값을 갱신
+ */
 export function useMemo<T>(factory: () => T, _deps: DependencyList, _equals = shallowEquals): T {
   // 1. useRef를 통해서 의존성과 factory 결과값을 저장
   const depsRef = useRef<DependencyList | null>(null);

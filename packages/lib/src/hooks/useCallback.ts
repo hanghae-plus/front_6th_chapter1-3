@@ -3,6 +3,13 @@ import type { DependencyList } from "react";
 import { useRef } from "./useRef";
 import { shallowEquals } from "../equals";
 
+/**
+ * factory 함수와 의존성 배열을 받아, 의존성이 변경될 때만 새로운 함수를 반환하는 커스텀 훅
+ *
+ * @param factory 생성할 함수
+ * @param _deps 의존성 배열
+ * @returns 의존성 변경 시에만 갱신되는 함수 참조
+ */
 export function useCallback<T extends Function>(factory: T, _deps: DependencyList) {
   // 1. useRef를 통해서 의존성과 factory 함수를 저장
   const depsRef = useRef<DependencyList | null>(null);

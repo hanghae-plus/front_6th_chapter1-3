@@ -7,6 +7,9 @@ import { useRef } from "./useRef";
  * - 동시에 콜백 함수 자체는 동일한 참조를 유지해야 한다 (useCallback 사용)
  *
  * => useRef로 콜백을 래핑하여 참조는 고정하고, 내부 current 값만 최신 함수로 업데이트한다.
+ *
+ * @param fn 콜백 함수
+ * @returns 콜백 함수
  */
 export const useAutoCallback = <T extends AnyFunction>(fn: T): T => {
   // 1. useRef를 이용해 ref 객체의 참조(메모리 주소)는 변하지 않도록 한다.
