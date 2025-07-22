@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useRef, type DependencyList } from "react";
 // DependencyList는 React의 useEffect, useMemo, useCallback 등에서 사용하는 "의존성 배열"의 타입 의미
 import { shallowEquals } from "../equals";
