@@ -419,7 +419,7 @@ describe("Chapter 1-3 기본과제: hooks 구현하기 > ", () => {
   });
 
   describe("custom hook 만들어보기", () => {
-    describe.only("useShallowState 훅 테스트", () => {
+    describe("useShallowState 훅 테스트", () => {
       it.each([
         {
           type: "primitive number",
@@ -670,7 +670,7 @@ describe("Chapter 1-3 기본과제: hooks 구현하기 > ", () => {
       });
     });
 
-    describe("useAutoCallback 훅", () => {
+    describe.only("useAutoCallback 훅", () => {
       it("useAutoCallback으로 만들어진 함수는, 참조가 변경되지 않으면서 항상 새로운 값을 참조한다.", () => {
         const fn = (x: number) => x * 2;
         const mockCallback1 = vi.fn(fn);

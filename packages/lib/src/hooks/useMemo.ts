@@ -15,7 +15,7 @@ export function useMemo<T>(factory: () => T, _deps: DependencyList, _equals = sh
   if (memoRef.current) {
     const { value, deps } = memoRef.current;
     // 이전 의존성과 현재 의존성 얕은 비교
-    if (shallowEquals(deps, _deps)) {
+    if (_equals(deps, _deps)) {
       return value; // 캐시된 값 반환
     }
   }
