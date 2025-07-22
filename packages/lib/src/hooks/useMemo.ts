@@ -7,16 +7,18 @@ import { shallowEquals } from "../equals";
 // _equals - 의존성 배열 비교 함수
 // useRef - 저장된 배열과 새로운 배열을 비교
 export function useMemo<T>(factory: () => T, _deps: DependencyList, _equals = shallowEquals): T {
-  const depsRef = useRef<DependencyList>([]);
-  const valueRef = useRef<T | null>(null);
+  const ref = useRef<{ deps: DependencyList; value: T | null }>({
+    deps: [],
+    value: null,
+  });
 
-  if (valueRef.current !== null && _equals(depsRef.current, _deps)) {
-    return valueRef.current;
+  if (ref.current.value !== null && _equals(ref.current.deps, _deps)) {
+    return ref.current.value;
   }
 
   const nextValue = factory();
-  depsRef.current = _deps;
-  valueRef.current = nextValue;
+  ref.current.deps = _deps;
+  ref.current.value = nextValue;
 
   return nextValue;
 }
