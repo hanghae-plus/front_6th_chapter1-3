@@ -24,11 +24,6 @@
     "prepare": "husky",
     "gh-pages": "pnpm -F @hanghae-plus/shopping build && gh-pages -d ./packages/app/dist"
   },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "prettier --write"
-    ]
-  },
   "devDependencies": {
     "@babel/core": "latest",
     "@babel/plugin-transform-react-jsx": "latest",
