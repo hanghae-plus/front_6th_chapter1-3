@@ -1,9 +1,22 @@
-import { useRef } from "react";
 import { shallowEquals } from "../equals";
+import { useRef } from "./useRef";
 
 type Selector<T, S = T> = (state: T) => S;
 
 export const useShallowSelector = <T, S = T>(selector: Selector<T, S>) => {
-  // 이전 상태를 저장하고, shallowEquals를 사용하여 상태가 변경되었는지 확인하는 훅을 구현합니다.
-  return (state: T): S => selector(state);
+  const prevResult = useRef<S | null>(null);
+
+  const memoizedSelector = (state: T) => {
+    const result = selector(state);
+
+    // 이전 결과가 있고, shallow 비교에서 동일하면 이전 결과 반환
+    if (prevResult.current && shallowEquals(prevResult.current, result)) {
+      return prevResult.current;
+    }
+
+    prevResult.current = result;
+    return result;
+  };
+
+  return memoizedSelector;
 };
