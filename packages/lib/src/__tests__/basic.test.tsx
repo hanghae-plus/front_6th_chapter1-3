@@ -9,7 +9,7 @@ import { useAutoCallback } from "../hooks/useAutoCallback.ts";
 
 describe("Chapter 1-3 기본과제: hooks 구현하기 > ", () => {
   describe("비교 함수 구현하기 > ", () => {
-    describe.only("shallowEquals 함수", () => {
+    describe("shallowEquals 함수", () => {
       it("기본 타입 값들을 정확히 비교해야 한다", () => {
         expect(shallowEquals(1, 1)).toBe(true);
         expect(shallowEquals("안녕", "안녕")).toBe(true);
@@ -46,7 +46,7 @@ describe("Chapter 1-3 기본과제: hooks 구현하기 > ", () => {
       });
     });
 
-    describe("deepEquals 함수", () => {
+    describe.only("deepEquals 함수", () => {
       it("기본 타입 값들을 정확히 비교해야 한다", () => {
         expect(deepEquals(1, 1)).toBe(true);
         expect(deepEquals("안녕", "안녕")).toBe(true);
