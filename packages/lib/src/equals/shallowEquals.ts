@@ -1,5 +1,5 @@
 export const shallowEquals = (a: unknown, b: unknown): boolean => {
-  // 참조가 같으면(같은 메모리 주소를 가르키면
+  // 참조가 같으면
   if (a === b) return true;
 
   // null 또는 undefined 체크
