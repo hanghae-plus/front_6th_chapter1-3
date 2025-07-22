@@ -97,7 +97,7 @@ describe("Chapter 1-3 기본과제: hooks 구현하기 > ", () => {
       useMemo: React.useMemo,
     },
   ])("$spec > ", ({ useRef, useCallback, useMemo }) => {
-    describe.only("useRef 훅", () => {
+    describe("useRef 훅", () => {
       it("리렌더링이 되어도 useRef의 참조값이 유지된다. ", () => {
         const refs = new Set();
 
@@ -183,7 +183,7 @@ describe("Chapter 1-3 기본과제: hooks 구현하기 > ", () => {
       });
     });
 
-    describe("useMemo 훅", () => {
+    describe.only("useMemo 훅", () => {
       const mockFactory = vi.fn();
 
       const TestComponent = forwardRef<
