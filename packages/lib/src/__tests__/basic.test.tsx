@@ -183,7 +183,7 @@ describe("Chapter 1-3 기본과제: hooks 구현하기 > ", () => {
       });
     });
 
-    describe.only("useMemo 훅", () => {
+    describe("useMemo 훅", () => {
       const mockFactory = vi.fn();
 
       const TestComponent = forwardRef<
@@ -419,7 +419,7 @@ describe("Chapter 1-3 기본과제: hooks 구현하기 > ", () => {
   });
 
   describe("custom hook 만들어보기", () => {
-    describe("useShallowState 훅 테스트", () => {
+    describe.only("useShallowState 훅 테스트", () => {
       it.each([
         {
           type: "primitive number",
