@@ -9,7 +9,7 @@
   "main": "src/index.ts",
   "scripts": {
     "build": "vite build",
-    "tsc": "tsc --noEmit",
+    "tsc": "tsgo --noEmit",
     "lint:fix": "eslint --fix",
     "prettier:write": "prettier --write ./src",
     "test": "vitest",
@@ -32,6 +32,7 @@
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@types/use-sync-external-store": "latest",
+    "@typescript/native-preview": "7.0.0-dev.20250722.1",
     "@vitejs/plugin-react-oxc": "latest",
     "@vitejs/plugin-react-swc": "latest",
     "eslint": "^9.9.0",

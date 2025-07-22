@@ -11,7 +11,7 @@
     "dev": "pnpm -F @hanghae-plus/shopping dev",
     "build": "pnpm run -r build",
     "lint:fix": "pnpm run -r lint:fix",
-    "tsc": "pnpm run -r tsc",
+    "tsc": "pnpm run -r tsgo",
     "prettier:write": "prettier --write ./packages/*/src",
     "preview": "pnpm -F @hanghae-plus/shopping preview",
     "test": "pnpm -F @hanghae-plus/lib test",
