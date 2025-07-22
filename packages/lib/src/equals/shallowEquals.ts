@@ -7,18 +7,6 @@ import { isObject } from "../utils/type-guard";
  * @returns 얕은 비교 결과 (같으면 true, 다르면 false)
  */
 export const shallowEquals = (a: unknown, b: unknown) => {
-  if (a === b) {
-    return true;
-  }
-
-  if (typeof a === "object" && typeof b !== "object") {
-    return false;
-  }
-
-  if (typeof a !== "object" && typeof b === "object") {
-    return false;
-  }
-
   if (isObject(a) && isObject(b)) {
     const aKeys = Object.keys(a);
     const bKeys = Object.keys(b);
