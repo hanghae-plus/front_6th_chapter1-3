@@ -6,6 +6,8 @@ export const createObserver = () => {
   // useSyncExternalStore 에서 활용할 수 있도록 subscribe 함수를 수정합니다.
   const subscribe = (fn: Listener) => {
     listeners.add(fn);
+
+    return () => unsubscribe(fn);
   };
 
   const unsubscribe = (fn: Listener) => {
@@ -14,5 +16,5 @@ export const createObserver = () => {
 
   const notify = () => listeners.forEach((listener) => listener());
 
-  return { subscribe, notify };
+  return { subscribe, notify, unsubscribe };
 };
