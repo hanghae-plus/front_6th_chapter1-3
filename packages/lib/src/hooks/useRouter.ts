@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { RouterInstance } from "../Router";
 import type { AnyFunction } from "../types";
 import { useSyncExternalStore } from "react";
@@ -6,8 +5,26 @@ import { useShallowSelector } from "./useShallowSelector";
 
 const defaultSelector = <T, S = T>(state: T) => state as unknown as S;
 
+/**
+ * 라우터 인스턴스를 사용하는 훅
+ *
+ * @param router - 라우터 인스턴스
+ * @param selector - 라우터 인스턴스의 상태를 선택하는 함수 ex. (state) => state.count)
+ * @returns 선택된 라우터 인스턴스의 상태
+ */
 export const useRouter = <T extends RouterInstance<AnyFunction>, S>(router: T, selector = defaultSelector<T, S>) => {
-  // useSyncExternalStore를 사용하여 router의 상태를 구독하고 가져오는 훅을 구현합니다.
   const shallowSelector = useShallowSelector(selector);
-  return shallowSelector(router);
+
+  const selectedSnapshot = useSyncExternalStore(subscribe, getSelectedSnapshot);
+
+  function subscribe(onStoreChange: () => void): () => void {
+    const unsubscribe = router.subscribe(onStoreChange);
+    return () => unsubscribe(onStoreChange);
+  }
+
+  function getSelectedSnapshot() {
+    return shallowSelector(router);
+  }
+
+  return selectedSnapshot;
 };
