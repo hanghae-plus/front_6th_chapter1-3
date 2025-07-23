@@ -4,49 +4,66 @@ import { createPortal } from "react-dom";
 import { Toast } from "./Toast";
 import { createActions, initialState, toastReducer, type ToastType } from "./toastReducer";
 import { debounce } from "../../utils";
+import { useCallback, useMemo } from "@hanghae-plus/lib/src/hooks";
 
 type ShowToast = (message: string, type: ToastType) => void;
 type Hide = () => void;
 
-const ToastContext = createContext<{
-  message: string;
-  type: ToastType;
+export const ToastActionContext = createContext<{
   show: ShowToast;
   hide: Hide;
 }>({
-  ...initialState,
   show: () => null,
   hide: () => null,
 });
 
+const ToastStateContext = createContext<{
+  message: string;
+  type: ToastType;
+}>({
+  ...initialState,
+});
+
 const DEFAULT_DELAY = 3000;
 
-const useToastContext = () => useContext(ToastContext);
-export const useToastCommand = () => {
-  const { show, hide } = useToastContext();
+export const useToastAction = () => {
+  const { show, hide } = useContext(ToastActionContext);
   return { show, hide };
 };
 export const useToastState = () => {
-  const { message, type } = useToastContext();
+  const { message, type } = useContext(ToastStateContext);
   return { message, type };
 };
 
 export const ToastProvider = memo(({ children }: PropsWithChildren) => {
   const [state, dispatch] = useReducer(toastReducer, initialState);
-  const { show, hide } = createActions(dispatch);
+
+  // actions를 메모이제이션하여 매번 새로운 객체가 생성되는 것을 방지
+  const actions = useMemo(() => createActions(dispatch), [dispatch]);
+  const { show, hide } = actions;
   const visible = state.message !== "";
 
-  const hideAfter = debounce(hide, DEFAULT_DELAY);
+  // hideAfter 함수를 useMemo으로 메모이제이션
+  const hideAfter = useMemo(() => debounce(hide, DEFAULT_DELAY), [hide]);
 
-  const showWithHide: ShowToast = (...args) => {
-    show(...args);
-    hideAfter();
-  };
+  // showWithHide 함수를 useCallback으로 메모이제이션
+  const showWithHide: ShowToast = useCallback(
+    (...args) => {
+      show(...args);
+      hideAfter();
+    },
+    [show, hideAfter],
+  );
+
+  const memodedState = useMemo(() => ({ message: state.message, type: state.type }), [state.message, state.type]);
+  const memoedAction = useMemo(() => ({ show: showWithHide, hide }), [showWithHide, hide]);
 
   return (
-    <ToastContext value={{ show: showWithHide, hide, ...state }}>
-      {children}
-      {visible && createPortal(<Toast />, document.body)}
-    </ToastContext>
+    <ToastActionContext.Provider value={memoedAction}>
+      <ToastStateContext.Provider value={memodedState}>
+        {children}
+        {visible && createPortal(<Toast />, document.body)}
+      </ToastStateContext.Provider>
+    </ToastActionContext.Provider>
   );
 });
