@@ -6,7 +6,7 @@ import { createStore } from "../createStore";
 import { counterReducer, createMockRouter, dataReducer } from "./dummies";
 
 describe("Chapter 1-3 심화과제: 고급 hooks 구현하기 > ", () => {
-  describe("useStorage 훅 테스트", () => {
+  describe.only("useStorage 훅 테스트", () => {
     beforeEach(() => {
       // localStorage 초기화
       localStorage.clear();
