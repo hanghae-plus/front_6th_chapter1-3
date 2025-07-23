@@ -4,7 +4,6 @@ import { createPortal } from "react-dom";
 import { Toast } from "./Toast";
 import { createActions, initialState, toastReducer, type ToastType } from "./toastReducer";
 import { debounce } from "../../utils";
-import { useAutoCallback } from "@hanghae-plus/lib";
 type ShowToast = (message: string, type: ToastType) => void;
 type Hide = () => void;
 
