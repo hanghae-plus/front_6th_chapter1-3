@@ -5,5 +5,7 @@ type Storage<T> = ReturnType<typeof createStorage<T>>;
 
 export const useStorage = <T>(storage: Storage<T>) => {
   // useSyncExternalStore를 사용해서 storage의 상태를 구독하고 가져오는 훅을 구현해보세요.
-  return storage.get();
+
+  // useStore - 하늘님의 조언으로 유사 한 소스 줍줍
+  return useSyncExternalStore(storage.subscribe, () => storage.get());
 };
