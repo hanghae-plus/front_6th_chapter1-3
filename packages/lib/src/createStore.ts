@@ -4,7 +4,7 @@ export const createStore = <S, A = (args: { type: string; payload?: unknown }) =
   reducer: (state: S, action: A) => S,
   initialState: S,
 ) => {
-  const { subscribe, notify } = createObserver();
+  const { subscribe, unsubscribe, notify } = createObserver();
 
   let state = initialState;
 
@@ -18,5 +18,5 @@ export const createStore = <S, A = (args: { type: string; payload?: unknown }) =
     }
   };
 
-  return { getState, dispatch, subscribe };
+  return { getState, dispatch, subscribe, unsubscribe };
 };

@@ -14,5 +14,5 @@ export const createObserver = () => {
 
   const notify = () => listeners.forEach((listener) => listener());
 
-  return { subscribe, notify };
+  return { subscribe, unsubscribe, notify };
 };
