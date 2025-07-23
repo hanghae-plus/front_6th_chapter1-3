@@ -29,7 +29,6 @@ export const useToastCommand = () => useContext(ToastActionContext);
 export const useToastState = () => useContext(ToastContext);
 
 export const ToastProvider = memo(({ children }: PropsWithChildren) => {
-  console.log("[ToastProvider] 렌더링");
   const [state, dispatch] = useReducer(toastReducer, initialState);
   const { show, hide } = useMemo(() => createActions(dispatch), [dispatch]);
   const visible = state.message !== "";
