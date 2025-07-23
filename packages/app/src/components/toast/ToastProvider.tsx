@@ -23,34 +23,13 @@ const ToastActionsContext = createContext<{
   hide: () => null,
 });
 
-// const ToastContext = createContext<{
-//   message: string;
-//   type: ToastType;
-//   show: ShowToast;
-//   hide: Hide;
-// }>({
-//   ...initialState,
-//   show: () => null,
-//   hide: () => null,
-// });
-
 const DEFAULT_DELAY = 3000;
 
-// const useToastContext = () => useContext(ToastContext);
 export const useToastState = () => useContext(ToastStateContext);
 export const useToastCommand = () => useContext(ToastActionsContext);
-// export const useToastCommand = () => {
-//   const { show, hide } = useToastContext();
-//   return { show, hide };
-// };
-// export const useToastState = () => {
-//   const { message, type } = useToastContext();
-//   return { message, type };
-// };
 
 export const ToastProvider = memo(({ children }: PropsWithChildren) => {
   const [state, dispatch] = useReducer(toastReducer, initialState);
-  // const { show, hide } = createActions(dispatch);
   const { show, hide } = useRef(createActions(dispatch)).current;
   const visible = state.message !== "";
 
