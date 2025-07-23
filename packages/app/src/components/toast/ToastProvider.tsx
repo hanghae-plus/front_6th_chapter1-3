@@ -1,4 +1,4 @@
-import { useAutoCallback, useMemo } from "@hanghae-plus/lib/src/hooks";
+import { useCallback, useMemo } from "@hanghae-plus/lib/src/hooks";
 import { createContext, memo, type PropsWithChildren, useContext, useReducer } from "react";
 import { createPortal } from "react-dom";
 import { debounce } from "../../utils";
@@ -35,10 +35,13 @@ export const ToastProvider = memo(({ children }: PropsWithChildren) => {
   const visible = state.message !== "";
 
   const hideAfter = useMemo(() => debounce(hide, DEFAULT_DELAY), [hide]);
-  const showWithHide: ShowToast = useAutoCallback((...args) => {
-    show(...args);
-    hideAfter();
-  });
+  const showWithHide: ShowToast = useCallback(
+    (...args) => {
+      show(...args);
+      hideAfter();
+    },
+    [show, hideAfter],
+  );
 
   const value = useMemo(
     () => ({
