@@ -9,8 +9,6 @@ export const useShallowSelector = <T, S = T>(selector: Selector<T, S>) => {
   const prev = useRef<S | null>(null);
 
   const res = (state: T): S => {
-    console.log("prev => ", prev.current);
-    console.log("state =>", state);
     if (!shallowEquals(selector(state), prev.current)) prev.current = selector(state);
 
     return prev.current as S;
