@@ -1,17 +1,23 @@
 import { type FunctionComponent } from "react";
 import { shallowEquals } from "../equals";
+import { useRef } from "../hooks";
 
 export function memo<P extends object>(Component: FunctionComponent<P>, equals = shallowEquals) {
-  let prevProps: P | undefined = undefined;
-  let result: ReturnType<typeof Component> | undefined = undefined;
+  return function (props: P) {
+    const prevProps = useRef<P | null>(null);
+    const prevRendered = useRef<ReturnType<typeof Component> | null>(null);
 
-  return function MemoizedComponent(props: P) {
-    if (!prevProps || !equals(prevProps, props)) {
-      prevProps = props;
-      result = Component(props);
-      return result;
+    // 항상 Component(props) 호출
+    const rendered = Component(props);
+
+    if (prevProps.current !== null && equals(prevProps.current, props)) {
+      // props가 같으면 이전 결과 반환
+      return prevRendered.current;
     }
 
-    return result;
+    // props가 다르면 새로 렌더링 결과 저장
+    prevProps.current = props;
+    prevRendered.current = rendered;
+    return rendered;
   };
 }

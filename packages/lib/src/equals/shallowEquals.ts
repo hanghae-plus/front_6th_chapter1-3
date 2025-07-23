@@ -4,6 +4,10 @@ export const shallowEquals = (a: unknown, b: unknown) => {
   // 타입이 변경되면 무조건 다르다고 판단
   if (typeof a !== typeof b) return false;
 
+  if (typeof a !== "object" || a === null || typeof b !== "object" || b === null) {
+    return a === b;
+  }
+
   // 배열 비교
   if (isArray(a) && isArray(b)) {
     if (a.length !== b.length) return false;
@@ -25,8 +29,10 @@ export const shallowEquals = (a: unknown, b: unknown) => {
 
     if (keysA.length !== keysB.length) return false;
 
-    for (let i = 0; i < keysA.length; i++) {
-      const key = keysA[i];
+    for (const key of keysA) {
+      if (a[key] !== b[key]) {
+        return false;
+      }
 
       if (Object.is(a[key], b[key])) {
         continue;
