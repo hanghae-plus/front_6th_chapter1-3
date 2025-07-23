@@ -285,7 +285,7 @@ describe("Chapter 1-3 심화과제: 고급 hooks 구현하기 > ", () => {
     });
   });
 
-  describe.only("useRouterSelector 훅 테스트", () => {
+  describe("useRouterSelector 훅 테스트", () => {
     const router = createMockRouter();
 
     beforeEach(() => {
