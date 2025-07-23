@@ -8,7 +8,7 @@ export const createObserver = () => {
     listeners.add(fn);
 
     return () => {
-      listeners.delete(fn);
+      unsubscribe(fn);
     };
   };
 
