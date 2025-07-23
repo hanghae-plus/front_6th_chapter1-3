@@ -1,7 +1,15 @@
 import { useState } from "react";
 import { shallowEquals } from "../equals";
+import { useCallback } from "./useCallback";
+// initialValue타입 명시적으로 선언
+export const useShallowState = <T>(initialValue: T | (() => T)) => {
+  const [state, setState] = useState<T>(initialValue);
+  // setShallowState는 호출마다 새로정의 되기 때문에 메모이제이션
+  const setShallowState = useCallback((nextState: T) => {
+    setState((prev) => {
+      return shallowEquals(prev, nextState) ? prev : nextState;
+    });
+  }, []);
 
-export const useShallowState = <T>(initialValue: Parameters<typeof useState<T>>[0]) => {
-  // useState를 사용하여 상태를 관리하고, shallowEquals를 사용하여 상태 변경을 감지하는 훅을 구현합니다.
-  return useState(initialValue);
+  return [state, setShallowState] as const;
 };
