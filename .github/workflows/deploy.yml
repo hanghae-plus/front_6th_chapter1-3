@@ -1,0 +1,28 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "22"
+
+      - run: npm install -g pnpm
+      - run: pnpm install
+
+      # ✅ 작성자 정보 설정
+      - run: |
+          git config --global user.name "nemobim"
+          git config --global user.email "doag47@gmail.com"
+
+      # 배포 실행
+      - run: pnpm run gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
