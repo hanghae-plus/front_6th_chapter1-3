@@ -1,4 +1,5 @@
 import { createObserver } from "./createObserver.ts";
+import { shallowEquals } from "./equals/shallowEquals.ts";
 
 export const createStorage = <T>(key: string, storage = window.localStorage) => {
   let data: T | null = JSON.parse(storage.getItem(key) ?? "null");
@@ -8,6 +9,9 @@ export const createStorage = <T>(key: string, storage = window.localStorage) => 
 
   const set = (value: T) => {
     try {
+      if (shallowEquals(data, value)) {
+        return;
+      }
       data = value;
       storage.setItem(key, JSON.stringify(data));
       notify();
