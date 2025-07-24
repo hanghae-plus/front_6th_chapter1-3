@@ -1,3 +1,33 @@
 export const deepEquals = (a: unknown, b: unknown) => {
-  return a === b;
+  if (Object.is(a, b)) {
+    return true;
+  }
+
+  if (typeof a !== "object" || a === null || typeof b !== "object" || b === null) {
+    return false;
+  }
+
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+
+  if (keysA.length !== keysB.length) {
+    return false;
+  }
+
+  for (let i = 0; i < keysA.length; i++) {
+    const currentKey = keysA[i];
+
+    if (!Object.prototype.hasOwnProperty.call(b, currentKey)) {
+      return false;
+    }
+
+    const valA = (a as Record<string, unknown>)[currentKey];
+    const valB = (b as Record<string, unknown>)[currentKey];
+
+    if (!deepEquals(valA, valB)) {
+      return false;
+    }
+  }
+
+  return true;
 };

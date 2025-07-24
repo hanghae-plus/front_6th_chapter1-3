@@ -10,6 +10,11 @@ export default tseslint.config([
   { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
+  {
+    rules: {
+      "@typescript-eslint/no-unused-vars": "warn", // 에러 대신 경고
+    },
+  },
   eslintPluginPrettier,
   eslintConfigPrettier,
 ]);
