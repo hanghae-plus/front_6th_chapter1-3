@@ -3,13 +3,11 @@ type Listener = () => void;
 export const createObserver = () => {
   const listeners = new Set<Listener>();
 
-  // useSyncExternalStore 에서 활용할 수 있도록 subscribe 함수를 수정합니다.
-  const subscribe = (fn: Listener) => {
-    listeners.add(fn);
-  };
-
-  const unsubscribe = (fn: Listener) => {
-    listeners.delete(fn);
+  const subscribe = (callback: Listener) => {
+    listeners.add(callback);
+    return () => {
+      listeners.delete(callback);
+    };
   };
 
   const notify = () => listeners.forEach((listener) => listener());
