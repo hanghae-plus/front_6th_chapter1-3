@@ -11,7 +11,7 @@ export const createObserver = () => {
   const unsubscribe = (fn: Listener) => {
     listeners.delete(fn);
   };
-
+  console.log(unsubscribe);
   const notify = () => listeners.forEach((listener) => listener());
 
   return { subscribe, notify };
