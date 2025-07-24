@@ -1,3 +1,5 @@
+import { baseEquals } from "./baseEquals";
+
 export const shallowEquals = (a: unknown, b: unknown) => {
-  return a === b;
+  return baseEquals(a, b, (valueA, valueB) => valueA === valueB);
 };

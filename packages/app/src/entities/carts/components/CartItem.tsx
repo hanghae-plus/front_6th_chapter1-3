@@ -2,7 +2,7 @@ import { removeFromCart, toggleCartSelect, updateCartQuantity } from "../cartUse
 import { PublicImage } from "../../../components";
 import type { Cart } from "../types";
 import { useCartStoreSelector } from "../hooks";
-import { useMemo } from "react";
+import { useMemo } from "@hanghae-plus/lib";
 
 export function CartItem({ id }: Readonly<Pick<Cart, "id">>) {
   const selector = useMemo(
