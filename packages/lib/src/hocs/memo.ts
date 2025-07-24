@@ -7,9 +7,10 @@ export function memo<P extends object>(Component: FunctionComponent<P>, equals =
     const propsRef = useRef<P | null>(null);
     const memoizedComponent = useRef<ReactNode | null>(null);
 
-    const cachedRender: FunctionComponent<P> = (props) => {
+    const renderMemoizedContent: FunctionComponent<P> = (props) => {
       if (!propsRef.current || !equals(propsRef.current, props)) {
         const renderedComponent = Component(props);
+
         propsRef.current = props;
         memoizedComponent.current = renderedComponent as ReactNode;
 
@@ -19,6 +20,6 @@ export function memo<P extends object>(Component: FunctionComponent<P>, equals =
       return memoizedComponent.current;
     };
 
-    return cachedRender(props);
+    return renderMemoizedContent(props);
   };
 }

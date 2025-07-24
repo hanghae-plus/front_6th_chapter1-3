@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useRef, type DependencyList } from "react";
 import { shallowEquals } from "../equals";
 

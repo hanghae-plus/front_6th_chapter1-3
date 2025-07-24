@@ -4,20 +4,19 @@ import { shallowEquals } from "../equals";
 type Selector<T, S = T> = (state: T) => S;
 
 export const useShallowSelector = <T, S = T>(selector: Selector<T, S>) => {
-  const _state = useRef<S | null>(null);
+  const memoizedState = useRef<S | null>(null);
 
   // 이전 상태를 저장하고, shallowEquals를 사용하여 상태가 변경되었는지 확인하는 훅을 구현합니다.
-  /**@todo 이름 갱장히 애매. 고쳐주세요 */
-  const cachedSelector = (state: T): S => {
-    const selected = selector(state);
+  const getMemoizedValue = (state: T): S => {
+    const newSelectedState = selector(state);
 
-    if (_state.current && shallowEquals(_state.current, selected)) {
-      return _state.current;
+    if (memoizedState.current && shallowEquals(memoizedState.current, newSelectedState)) {
+      return memoizedState.current;
     }
 
-    _state.current = selector(state);
-    return _state.current;
+    memoizedState.current = newSelectedState;
+    return newSelectedState;
   };
 
-  return cachedSelector;
+  return getMemoizedValue;
 };
