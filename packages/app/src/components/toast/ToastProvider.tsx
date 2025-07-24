@@ -4,30 +4,37 @@ import { createPortal } from "react-dom";
 import { Toast } from "./Toast";
 import { createActions, initialState, toastReducer, type ToastType } from "./toastReducer";
 import { debounce } from "../../utils";
+import { useMemo } from "@hanghae-plus/lib/src/hooks";
 
 type ShowToast = (message: string, type: ToastType) => void;
 type Hide = () => void;
 
-const ToastContext = createContext<{
+const ToastContentContext = createContext<{
   message: string;
   type: ToastType;
+}>({
+  ...initialState,
+});
+
+const ToastActionContext = createContext<{
   show: ShowToast;
   hide: Hide;
 }>({
-  ...initialState,
   show: () => null,
   hide: () => null,
 });
 
 const DEFAULT_DELAY = 3000;
 
-const useToastContext = () => useContext(ToastContext);
+const useToastContentContext = () => useContext(ToastContentContext);
+const useToastActionContext = () => useContext(ToastActionContext);
+
 export const useToastCommand = () => {
-  const { show, hide } = useToastContext();
+  const { show, hide } = useToastActionContext();
   return { show, hide };
 };
 export const useToastState = () => {
-  const { message, type } = useToastContext();
+  const { message, type } = useToastContentContext();
   return { message, type };
 };
 
@@ -43,10 +50,15 @@ export const ToastProvider = memo(({ children }: PropsWithChildren) => {
     hideAfter();
   };
 
+  const memoizedState = useMemo(() => state, [state]);
+  const memoizedAction = useMemo(() => ({ show: showWithHide, hide }), []);
+
   return (
-    <ToastContext value={{ show: showWithHide, hide, ...state }}>
-      {children}
-      {visible && createPortal(<Toast />, document.body)}
-    </ToastContext>
+    <ToastActionContext.Provider value={memoizedAction}>
+      <ToastContentContext.Provider value={memoizedState}>
+        {children}
+        {visible && createPortal(<Toast />, document.body)}
+      </ToastContentContext.Provider>
+    </ToastActionContext.Provider>
   );
 });
