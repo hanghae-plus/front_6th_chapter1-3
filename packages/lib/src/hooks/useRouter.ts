@@ -1,12 +1,18 @@
+import { useSyncExternalStore, useCallback } from "react";
 import type { RouterInstance } from "../Router";
 import type { AnyFunction } from "../types";
-import { useSyncExternalStore } from "react";
 import { useShallowSelector } from "./useShallowSelector";
 
 const defaultSelector = <T, S = T>(state: T) => state as unknown as S;
 
-export const useRouter = <T extends RouterInstance<AnyFunction>, S>(router: T, selector = defaultSelector<T, S>) => {
-  // useSyncExternalStore를 사용하여 router의 상태를 구독하고 가져오는 훅을 구현합니다.
+export const useRouter = <T extends RouterInstance<AnyFunction>, S = T>(
+  router: T,
+  selector: (router: T) => S = defaultSelector<T, S>,
+) => {
   const shallowSelector = useShallowSelector(selector);
-  return shallowSelector(router);
+
+  const getSnapshot = useCallback(() => shallowSelector(router), [router, shallowSelector]);
+
+  // router.subscribe 는 createObserver 기반으로 만들어져 있어 unsubscribe 를 반환한다.
+  return useSyncExternalStore(router.subscribe, getSnapshot);
 };

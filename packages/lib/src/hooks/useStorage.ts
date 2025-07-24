@@ -1,9 +1,14 @@
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore, useCallback } from "react";
 import type { createStorage } from "../createStorage";
+import { useShallowSelector } from "./useShallowSelector";
 
 type Storage<T> = ReturnType<typeof createStorage<T>>;
 
 export const useStorage = <T>(storage: Storage<T>) => {
-  // useSyncExternalStore를 사용해서 storage의 상태를 구독하고 가져오는 훅을 구현해보세요.
-  return storage.get();
+  // storage.get() 의 반환값 자체를 shallow 비교하여 동일 참조 유지
+  const shallowSelector = useShallowSelector((state: T | null) => state);
+
+  const getSnapshot = useCallback(() => shallowSelector(storage.get()), [storage, shallowSelector]);
+
+  return useSyncExternalStore(storage.subscribe, getSnapshot);
 };
