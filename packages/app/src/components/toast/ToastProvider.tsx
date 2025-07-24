@@ -4,49 +4,59 @@ import { createPortal } from "react-dom";
 import { Toast } from "./Toast";
 import { createActions, initialState, toastReducer, type ToastType } from "./toastReducer";
 import { debounce } from "../../utils";
+import { useCallback, useMemo } from "@hanghae-plus/lib/src/hooks";
 
 type ShowToast = (message: string, type: ToastType) => void;
 type Hide = () => void;
 
-const ToastContext = createContext<{
-  message: string;
-  type: ToastType;
+export const ToastActionContext = createContext<{
   show: ShowToast;
   hide: Hide;
 }>({
-  ...initialState,
   show: () => null,
   hide: () => null,
 });
 
+const ToastStateContext = createContext<{
+  message: string;
+  type: ToastType;
+}>({
+  ...initialState,
+});
+
 const DEFAULT_DELAY = 3000;
 
-const useToastContext = () => useContext(ToastContext);
 export const useToastCommand = () => {
-  const { show, hide } = useToastContext();
+  const { show, hide } = useContext(ToastActionContext);
   return { show, hide };
 };
 export const useToastState = () => {
-  const { message, type } = useToastContext();
+  const { message, type } = useContext(ToastStateContext);
   return { message, type };
 };
 
 export const ToastProvider = memo(({ children }: PropsWithChildren) => {
   const [state, dispatch] = useReducer(toastReducer, initialState);
-  const { show, hide } = createActions(dispatch);
-  const visible = state.message !== "";
 
-  const hideAfter = debounce(hide, DEFAULT_DELAY);
+  const { show, hide } = useMemo(() => createActions(dispatch), [dispatch]);
+  const visible = useMemo(() => state.message !== "", [state.message]);
 
-  const showWithHide: ShowToast = (...args) => {
+  const hideAfter = useMemo(() => debounce(hide, DEFAULT_DELAY), [hide]);
+
+  // showWithHide 함수를 useCallback으로 메모이제이션
+  const showWithHide: ShowToast = useCallback((...args) => {
     show(...args);
     hideAfter();
-  };
+  }, []);
+
+  const memoedAction = useMemo(() => ({ show: showWithHide, hide }), [showWithHide, hide]);
 
   return (
-    <ToastContext value={{ show: showWithHide, hide, ...state }}>
-      {children}
-      {visible && createPortal(<Toast />, document.body)}
-    </ToastContext>
+    <ToastActionContext value={memoedAction}>
+      <ToastStateContext value={state}>
+        {children}
+        {visible && createPortal(<Toast />, document.body)}
+      </ToastStateContext>
+    </ToastActionContext>
   );
 });
