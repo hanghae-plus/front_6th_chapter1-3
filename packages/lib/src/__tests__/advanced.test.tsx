@@ -154,6 +154,62 @@ describe("Chapter 1-3 심화과제: 고급 hooks 구현하기 > ", () => {
       expect(userResult.current).toBe("Alice"); // 변경되지 않음
       expect(settingsResult.current).toBe("dark-theme");
     });
+
+    it("외부에서 localStorage 직접 변경 시 감지해야 한다", () => {
+      const storage1 = createStorage<{ name: string }>("external-change-test");
+      const storage2 = createStorage<{ name: string }>("external-change-test");
+
+      const { result: result1 } = renderHook(() => useStorage(storage1));
+      const { result: result2 } = renderHook(() => useStorage(storage2));
+
+      // 초기값 설정
+      act(() => storage1.set({ name: "John" }));
+      expect(result1.current).toEqual({ name: "John" });
+      expect(result2.current).toEqual({ name: "John" });
+
+      act(() => {
+        const newData = { name: "Jane" };
+        localStorage.setItem("external-change-test", JSON.stringify(newData));
+
+        const customEvent = new CustomEvent("storage-inner-document", {
+          detail: {
+            key: "external-change-test",
+            oldValue: JSON.stringify({ name: "John" }),
+            newValue: JSON.stringify(newData),
+          },
+        });
+
+        window.dispatchEvent(customEvent);
+      });
+
+      expect(result1.current).toEqual({ name: "Jane" });
+      expect(result2.current).toEqual({ name: "Jane" });
+    });
+
+    it("다른 탭에서의 변경을 감지해야 한다 (storage 이벤트)", () => {
+      const storage = createStorage<{ theme: string }>("cross-tab-test");
+      const { result } = renderHook(() => useStorage(storage));
+
+      // 초기값 설정
+      act(() => storage.set({ theme: "light" }));
+      expect(result.current).toEqual({ theme: "light" });
+
+      act(() => {
+        const newData = { theme: "dark" };
+        localStorage.setItem("cross-tab-test", JSON.stringify(newData));
+
+        window.dispatchEvent(
+          new StorageEvent("storage", {
+            key: "cross-tab-test",
+            oldValue: JSON.stringify({ theme: "light" }),
+            newValue: JSON.stringify(newData),
+            storageArea: localStorage,
+          }),
+        );
+      });
+
+      expect(result.current).toEqual({ theme: "dark" });
+    });
   });
 
   describe("useStore 훅 테스트", () => {
