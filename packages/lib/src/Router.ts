@@ -65,6 +65,7 @@ export class Router<Handler extends (...args: any[]) => any> {
   }
 
   readonly subscribe = this.#observer.subscribe;
+  readonly unsubscribe = this.#observer.unsubscribe;
 
   addRoute(path: string, handler: Handler) {
     // 경로 패턴을 정규식으로 변환
