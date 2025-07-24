@@ -1,39 +1,39 @@
+function hasOwnProperty(obj: unknown, key: string) {
+  return Object.prototype.hasOwnProperty.call(obj, key);
+}
+
+function isNotNull(obj: unknown) {
+  return obj !== null;
+}
+
+function isObject(obj: unknown) {
+  return typeof obj === "object";
+}
 //객체의 최상위 속성들만 비교하며, 중첩된 객체는 참조값(메모리 주소)만 비교함
 export const shallowEquals = (a: unknown, b: unknown) => {
   // 객체의 최상위 속성들만 비교
   // 중첩된 객체는 참조값만 비교
   // Object.is로 구현하려 함.
 
-  if (Object.is(a, b)) return true;
+  const objA = a as Record<string, unknown>;
+  const objB = b as Record<string, unknown>;
+
+  if (Object.is(objA, objB)) return true;
 
   // 값이 객체가 아닌경우
-  if (typeof a !== "object" || typeof b !== "object" || a === null || b === null) return false;
+  if (!isObject(objA) || !isObject(objB) || !isNotNull(objA) || !isNotNull(objB)) return false;
 
-  const KeysA = Object.keys(a);
-  const KeysB = Object.keys(b);
+  const KeysA = Object.keys(objA);
+  const KeysB = Object.keys(objB);
   // key의 개수가 다른경우
 
   if (KeysA.length !== KeysB.length) return false;
   // key는 같은데 값이 다른 case
 
-  // Key는 같지만 값이 다른경우
-
-  // 배열일때
-  if (Array.isArray(a) && Array.isArray(b)) {
-    if (a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) {
-      if (!Object.is(a[i], b[i])) return false;
-    }
-    return true;
-  }
   // 키가 같다면 각 값들을 비교
   // 값들을 비교한다고 해당하는 키에 맞는 발류를 가져오는데 타입 에러가 나옴
   for (const key of KeysA) {
-    if (
-      !Object.prototype.hasOwnProperty.call(b, key) ||
-      !Object.is((a as Record<string, unknown>)[key], (b as Record<string, unknown>)[key])
-    )
-      return false;
+    if (!hasOwnProperty(b, key) || !Object.is(objA[key], objB[key])) return false;
   }
 
   return true;
