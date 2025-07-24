@@ -3,13 +3,19 @@ import { shallowEquals } from "../equals";
 
 type Selector<T, S = T> = (state: T) => S;
 
-export const useShallowSelector = <T, S = T>(selector: Selector<T, S>) => {
-  // 이전 상태를 저장하고, shallowEquals를 사용하여 상태가 변경되었는지 확인하는 훅을 구현합니다.
-  // useRef로 이전 값 기억
-  // shallowEquals로 얕은 비교로 변경 감지
-  // 같으면 -> 이전 값 반환 (리랜더링 안 함)
-  // 다르면 -> 새로운 값 반환 + 값을 previous에 저장
+/**
+ * useShallowSelector - selector 함수를 shallow comparison으로 최적화하는 훅입니다.
+ *
+ * 특징:
+ * - 이전 결과와 shallow comparison을 통해 불필요한 리렌더링 방지
+ * - 같은 값이면 이전 참조를 유지하여 === 비교에서 true 반환
+ * - 값이 변경된 경우에만 새로운 참조 반환
+ *
+ * @param selector 상태에서 값을 선택하는 함수
+ * @returns 최적화된 selector 함수
+ */
 
+export const useShallowSelector = <T, S = T>(selector: Selector<T, S>) => {
   const previousRef = useRef<S>(null);
 
   return (state: T): S => {

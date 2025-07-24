@@ -1,3 +1,16 @@
+/**
+ * shallowEquals - 두 값의 얕은 비교를 수행합니다.
+ *
+ * 특징:
+ * - 객체의 첫 번째 깊이 속성들만 비교 (중첩 객체는 참조 비교)
+ * - Object.is()를 사용하여 정확한 값 비교
+ * - React의 최적화에서 주로 사용되는 비교 방식
+ *
+ * @param a 비교할 첫 번째 값
+ * @param b 비교할 두 번째 값
+ * @returns 두 값이 얕게 동등하면 true, 아니면 false
+ */
+
 export const shallowEquals = (a: unknown, b: unknown): boolean => {
   if (Object.is(a, b)) {
     return true;
@@ -10,13 +23,10 @@ export const shallowEquals = (a: unknown, b: unknown): boolean => {
   const keysA = Object.keys(a as Record<string, unknown>);
   const keysB = Object.keys(b as Record<string, unknown>);
 
-  // 길이가 다르면 false 리턴
   if (keysA.length !== keysB.length) {
     return false;
   }
 
-  // A 키를 기준으로 B에 같은 키가 있는지, 그리고 그 값이 있는지 확인
-  // Object.prototype.hasOwnProperty.call() => 객체가 해당 속성을 직접 소유하고 있는지 확인
   for (let i = 0; i < keysA.length; i++) {
     const currentKey = keysA[i];
 
