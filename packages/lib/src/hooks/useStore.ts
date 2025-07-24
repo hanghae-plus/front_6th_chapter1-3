@@ -16,7 +16,7 @@ export const useStore = <T, S = T>(store: Store<T>, selector: (state: T) => S = 
   // useSyncExternalStore(
   //    store.subscribe,
   //    store.getSnapshot,  함수여야 함
-  //    store.getServerSnapshot? // 이 인자는 서버 사이드 렌더링에만 필요합니다.
+  //    store.getServerSnapshot? // 서버 사이드 렌더링에만 필요
   // );
   return useSyncExternalStore(
     store.subscribe, // 구독 함수
