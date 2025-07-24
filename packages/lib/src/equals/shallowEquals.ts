@@ -1,6 +1,12 @@
 export const shallowEquals = (a: unknown, b: unknown) => {
   if (typeof a !== typeof b) return false;
 
+  // 배열 비교
+  if (Array.isArray(a) && Array.isArray(b)) {
+    if (a.length !== b.length) return false;
+    return a.every((v, index) => v === b[index]);
+  }
+
   // 객체 비교
   if (typeof a === "object" && typeof b === "object" && a !== null && b !== null) {
     const objA = a as Record<string, unknown>;
@@ -17,10 +23,5 @@ export const shallowEquals = (a: unknown, b: unknown) => {
     });
   }
 
-  // 배열 비교
-  if (Array.isArray(a) && Array.isArray(b)) {
-    if (a.length !== b.length) return false;
-    return a.every((v, index) => v === b[index]);
-  }
   return a === b;
 };
