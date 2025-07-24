@@ -132,7 +132,7 @@ const cartReducer = (state: typeof initialState, action: any) => {
     case CART_ACTIONS.LOAD_FROM_STORAGE:
       return {
         ...state,
-        ...action.payload,
+        ...(action.payload || {}),
       };
 
     default:

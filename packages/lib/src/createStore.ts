@@ -1,4 +1,5 @@
 import { createObserver } from "./createObserver";
+import { shallowEquals } from "./equals";
 
 export const createStore = <S, A = (args: { type: string; payload?: unknown }) => S>(
   reducer: (state: S, action: A) => S,
@@ -12,7 +13,7 @@ export const createStore = <S, A = (args: { type: string; payload?: unknown }) =
 
   const dispatch = (action: A) => {
     const newState = reducer(state, action);
-    if (!Object.is(newState, state)) {
+    if (!shallowEquals(newState, state)) {
       state = newState;
       notify();
     }
