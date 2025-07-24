@@ -4,38 +4,36 @@ import { createPortal } from "react-dom";
 import { Toast } from "./Toast";
 import { createActions, initialState, toastReducer, type ToastType } from "./toastReducer";
 import { debounce } from "../../utils";
+import { useMemo } from "@hanghae-plus/lib/src/hooks";
 
 type ShowToast = (message: string, type: ToastType) => void;
 type Hide = () => void;
 
-const ToastContext = createContext<{
-  message: string;
-  type: ToastType;
+// 상태 컨텍스트 (리렌더 유발)
+const ToastStateContext = createContext({
+  message: "",
+  type: "info" as ToastType,
+});
+
+// 액션 컨텍스트 (리렌더 유발 X)
+const ToastActionContext = createContext<{
   show: ShowToast;
   hide: Hide;
 }>({
-  ...initialState,
-  show: () => null,
-  hide: () => null,
+  show: () => {},
+  hide: () => {},
 });
 
 const DEFAULT_DELAY = 3000;
 
-const useToastContext = () => useContext(ToastContext);
-export const useToastCommand = () => {
-  const { show, hide } = useToastContext();
-  return { show, hide };
-};
-export const useToastState = () => {
-  const { message, type } = useToastContext();
-  return { message, type };
-};
+export const useToastState = () => useContext(ToastStateContext);
+export const useToastCommand = () => useContext(ToastActionContext);
 
 export const ToastProvider = memo(({ children }: PropsWithChildren) => {
   const [state, dispatch] = useReducer(toastReducer, initialState);
   const { show, hide } = createActions(dispatch);
-  const visible = state.message !== "";
 
+  const visible = state.message !== "";
   const hideAfter = debounce(hide, DEFAULT_DELAY);
 
   const showWithHide: ShowToast = (...args) => {
@@ -43,10 +41,14 @@ export const ToastProvider = memo(({ children }: PropsWithChildren) => {
     hideAfter();
   };
 
+  const actions = useMemo(() => ({ show: showWithHide, hide }), []);
+
   return (
-    <ToastContext value={{ show: showWithHide, hide, ...state }}>
-      {children}
-      {visible && createPortal(<Toast />, document.body)}
-    </ToastContext>
+    <ToastActionContext.Provider value={actions}>
+      <ToastStateContext.Provider value={state}>
+        {children}
+        {visible && createPortal(<Toast />, document.body)}
+      </ToastStateContext.Provider>
+    </ToastActionContext.Provider>
   );
 });
