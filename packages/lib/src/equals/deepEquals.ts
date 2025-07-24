@@ -1,14 +1,12 @@
-const isObject = (a: unknown): a is Record<string, unknown> => {
-  return a !== null && typeof a === "object";
-};
+import { isObject } from "../utils/typeGuards";
 
-/** @todo 리팩토링 필요 */
 export const deepEquals = (a: unknown, b: unknown): boolean => {
   const isAObject = isObject(a);
   const isBObject = isObject(b);
 
-  // 한쪽만 참조형일경우 동일하지 않음
-  if (isAObject !== isBObject) return false;
+  // 둘다 오브젝트 타입 아니면 값비교
+  if (!isAObject && !isBObject) return Object.is(a, b);
+
   // 한쪽만 어레이일 경우도 동일하지 않음
   if (Array.isArray(a) !== Array.isArray(b)) return false;
 
@@ -18,7 +16,7 @@ export const deepEquals = (a: unknown, b: unknown): boolean => {
     return a.every((item, index) => deepEquals(b[index], item));
   }
 
-  // 객체끼리 비교, 타입 추론을 위해 if문 한겹 더 씌움
+  // isObject 타입 가드를 통해 a, b를 객체 타입으로 좁혀 안전하게 다루기 위해 if문 추가
   if (isAObject && isBObject) {
     const aKeys = Object.keys(a);
     const bKeys = Object.keys(b);
@@ -31,6 +29,5 @@ export const deepEquals = (a: unknown, b: unknown): boolean => {
     return true;
   }
 
-  // 둘 다 참조형 아닐 때
-  return a === b;
+  return false;
 };
