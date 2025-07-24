@@ -3,6 +3,7 @@ import { router } from "./router";
 import { BASE_URL } from "./constants.ts";
 import { createRoot } from "react-dom/client";
 
+//
 const enableMocking = () =>
   import("./mocks/browser").then(({ worker }) =>
     worker.start({

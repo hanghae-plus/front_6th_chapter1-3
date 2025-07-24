@@ -2,17 +2,16 @@ import { removeFromCart, toggleCartSelect, updateCartQuantity } from "../cartUse
 import { PublicImage } from "../../../components";
 import type { Cart } from "../types";
 import { useCartStoreSelector } from "../hooks";
-import { useMemo } from "react";
+import { useMemo } from "@hanghae-plus/lib";
 
 export function CartItem({ id }: Readonly<Pick<Cart, "id">>) {
   const selector = useMemo(
     () =>
       ({ items }: { items: Cart[] }) =>
-        items.find((v) => v.id == id)!,
+        items.find((v) => v.id === id)!,
     [id],
   );
-
-  const item = useCartStoreSelector(selector);
+  const item = useCartStoreSelector(({ items }) => items.find((v) => v.id === id)!);
 
   const { price, quantity, selected, image, title } = item;
   const subtotal = price * quantity;

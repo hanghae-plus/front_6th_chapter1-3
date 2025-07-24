@@ -1,6 +1,6 @@
 import { useCartAddCommand } from "../../carts";
 import type { Product } from "../types";
-import { log } from "../../../utils";
+import { memo } from "@hanghae-plus/lib/src/hocs/memo";
 
 export function ProductCard({ onClick, ...product }: Product & { onClick: (id: string) => void }) {
   const addCart = useCartAddCommand();
@@ -9,8 +9,6 @@ export function ProductCard({ onClick, ...product }: Product & { onClick: (id: s
   const price = Number(lprice);
 
   const handleClick = () => onClick(productId);
-
-  log(`ProductCard: ${productId}`);
 
   return (
     <div
@@ -48,6 +46,8 @@ export function ProductCard({ onClick, ...product }: Product & { onClick: (id: s
     </div>
   );
 }
+
+export const MemoizedProductCard = memo(ProductCard);
 
 /**
  * 상품 로딩 스켈레톤 컴포넌트

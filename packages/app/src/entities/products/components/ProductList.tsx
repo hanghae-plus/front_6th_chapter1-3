@@ -1,4 +1,5 @@
-import { ProductCard, ProductCardSkeleton } from "./ProductCard";
+import { Profiler } from "react";
+import { ProductCard, ProductCardSkeleton, MemoizedProductCard } from "./ProductCard";
 import { router } from "../../../router";
 import { PublicImage } from "../../../components";
 import { useProductStore } from "../hooks";
@@ -22,7 +23,17 @@ const goToDetailPage = async (productId: string) => {
  */
 export function ProductList() {
   const { products, loading, error, totalCount } = useProductStore();
+
   const hasMore = products.length < totalCount;
+
+  const onRender = (
+    id: string,
+    phase: "mount" | "update" | "nested-update",
+    actualDuration: number,
+    ..._args: unknown[] // eslint-disable-line @typescript-eslint/no-unused-vars
+  ) => {
+    console.log(`[${id}] ${phase} - 실제 렌더링 시간: ${actualDuration.toFixed(2)}ms`);
+  };
 
   // 에러 상태
   if (error) {
@@ -67,14 +78,16 @@ export function ProductList() {
       )}
 
       {/* 상품 그리드 */}
-      <div className="grid grid-cols-2 gap-4 mb-6" id="products-grid">
-        {/* 로딩 스켈레톤 */}
-        {products.map((product) => (
-          <ProductCard key={product.productId} {...product} onClick={goToDetailPage} />
-        ))}
+      <Profiler id="ProductList" onRender={onRender}>
+        <div className="grid grid-cols-2 gap-4 mb-6" id="products-grid">
+          {/* 로딩 스켈레톤 */}
+          {products.map((product) => (
+            <MemoizedProductCard key={product.productId} {...product} onClick={goToDetailPage} />
+          ))}
 
-        {loading && Array.from({ length: 6 }).map((_, index) => <ProductCardSkeleton key={index} />)}
-      </div>
+          {loading && Array.from({ length: 6 }).map((_, index) => <ProductCardSkeleton key={index} />)}
+        </div>
+      </Profiler>
 
       {/* 무한 스크롤 로딩 */}
       {loading && products.length > 0 && (
