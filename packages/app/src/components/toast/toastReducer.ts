@@ -1,4 +1,5 @@
-import type { ActionDispatch } from "react";
+import { type ActionDispatch } from "react";
+import { useCallback, useMemo } from "@hanghae-plus/lib/src/hooks";
 
 export type ToastType = "info" | "success" | "warning" | "error";
 
@@ -33,7 +34,13 @@ export const toastReducer = (state: ToastState, action: any): ToastState => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const createActions = (dispatch: ActionDispatch<[action: any]>) => ({
-  show: (message: string, type: ToastType) => dispatch({ type: Actions.SHOW, payload: { message, type } }),
-  hide: () => dispatch({ type: Actions.HIDE }),
-});
+export const useToastActions = (dispatch: ActionDispatch<[action: any]>) => {
+  const show = useCallback(
+    (message: string, type: ToastType) => dispatch({ type: Actions.SHOW, payload: { message, type } }),
+    [dispatch],
+  );
+
+  const hide = useCallback(() => dispatch({ type: Actions.HIDE }), [dispatch]);
+
+  return useMemo(() => ({ show, hide }), [show, hide]);
+};
