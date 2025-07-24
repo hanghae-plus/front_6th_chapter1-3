@@ -6,6 +6,10 @@ export const createObserver = () => {
   // useSyncExternalStore 에서 활용할 수 있도록 subscribe 함수를 수정합니다.
   const subscribe = (fn: Listener) => {
     listeners.add(fn);
+    // 구독 해제 함수를 반환합니다.
+    return () => {
+      listeners.delete(fn);
+    };
   };
 
   const unsubscribe = (fn: Listener) => {
