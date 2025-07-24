@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 import { Toast } from "./Toast";
 import { createActions, initialState, toastReducer, type ToastState, type ToastType } from "./toastReducer";
 import { debounce } from "../../utils";
-import { useCallback, useMemo } from "@hanghae-plus/lib/src/hooks";
+import { useAutoCallback, useMemo } from "@hanghae-plus/lib/src/hooks";
 
 type ShowToast = (message: string, type: ToastType) => void;
 type Hide = () => void;
@@ -34,13 +34,10 @@ export const ToastProvider = memo(({ children }: PropsWithChildren) => {
 
   const hideAfter = useMemo(() => debounce(hide, DEFAULT_DELAY), [hide]);
 
-  const showWithHide: ShowToast = useCallback(
-    (...args) => {
-      show(...args);
-      hideAfter();
-    },
-    [show, hideAfter],
-  );
+  const showWithHide: ShowToast = useAutoCallback((...args) => {
+    show(...args);
+    hideAfter();
+  });
 
   const commands = useMemo(() => ({ show: showWithHide, hide }), [showWithHide, hide]);
   const value = useMemo(() => ({ ...state }), [state]);
