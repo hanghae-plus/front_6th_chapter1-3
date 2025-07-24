@@ -2,8 +2,12 @@ import { useSyncExternalStore } from "react";
 import type { createStorage } from "../createStorage";
 
 type Storage<T> = ReturnType<typeof createStorage<T>>;
-
+// return { get, set, reset, subscribe };
 export const useStorage = <T>(storage: Storage<T>) => {
   // useSyncExternalStore를 사용해서 storage의 상태를 구독하고 가져오는 훅을 구현해보세요.
-  return storage.get();
+  // const snapshot = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot?)
+
+  const currentStore = useSyncExternalStore(storage.subscribe, storage.get);
+
+  return currentStore;
 };
