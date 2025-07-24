@@ -1,3 +1,20 @@
-export const shallowEquals = (a: unknown, b: unknown) => {
-  return a === b;
-};
+export function shallowEquals(objA: unknown, objB: unknown): boolean {
+  if (objA === objB) return true;
+
+  if (objA == null || objB == null || typeof objA !== "object" || typeof objB !== "object") return false;
+
+  const keysOfA = Object.keys(objA);
+  const keysOfB = Object.keys(objB);
+
+  if (keysOfA.length !== keysOfB.length) return false;
+
+  for (const key of keysOfA) {
+    const valueA = (objA as Record<string, unknown>)[key];
+    const valueB = (objB as Record<string, unknown>)[key];
+    if (valueA !== valueB) {
+      return false;
+    }
+  }
+
+  return true;
+}
