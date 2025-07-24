@@ -12,27 +12,29 @@
     "tsc": "tsc --noEmit",
     "lint:fix": "eslint --fix",
     "prettier:write": "prettier --write ./src",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "gh-pages": "pnpm run build && gh-pages -d dist"
   },
   "dependencies": {
+    "@hanghae-plus/lib": "workspace:*",
+    "gh-pages": "^6.3.0",
     "react": "latest",
-    "react-dom": "latest",
-    "@hanghae-plus/lib": "workspace:*"
+    "react-dom": "latest"
   },
   "devDependencies": {
     "@babel/core": "latest",
     "@babel/plugin-transform-react-jsx": "latest",
     "@eslint/js": "^9.16.0",
+    "@types/node": "^24.0.13",
     "@types/react": "latest",
     "@types/react-dom": "latest",
     "@types/use-sync-external-store": "latest",
     "@vitejs/plugin-react-oxc": "latest",
-    "@types/node": "^24.0.13",
     "eslint": "^9.9.0",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.20",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
     "msw": "^2.10.2",
     "prettier": "^3.4.2",
     "typescript": "^5.8.3",
