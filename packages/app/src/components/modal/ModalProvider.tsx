@@ -1,27 +1,42 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, memo, type PropsWithChildren, type ReactNode, useContext, useState } from "react";
+
+import { createContext, memo, type PropsWithChildren, type ReactNode, useContext, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
+
 import { Modal } from "./Modal";
 
-export const ModalContext = createContext<{
-  open: (content: ReactNode) => void;
+type ModalContextValue = {
   close: () => void;
-}>({
-  open: () => null,
+  open: (content: ReactNode) => void;
+};
+
+const ModalContext = createContext<ModalContextValue>({
   close: () => null,
+  open: () => null,
 });
 
-export const useModalContext = () => useContext(ModalContext);
+export const useModalContext = () => {
+  const context = useContext(ModalContext);
+  if (!context) {
+    throw new Error("ModalProvider 내에서 useModalContext을 사용해야 합니다!");
+  }
+
+  return context;
+};
 
 export const ModalProvider = memo(({ children }: PropsWithChildren) => {
   const [content, setContent] = useState<ReactNode>(null);
 
-  const open = (newContent: ReactNode) => setContent(newContent);
-
-  const close = () => setContent(null);
+  const modalContextValue = useMemo<ModalContextValue>(
+    () => ({
+      close: () => setContent(null),
+      open: setContent,
+    }),
+    [],
+  );
 
   return (
-    <ModalContext value={{ open, close }}>
+    <ModalContext value={modalContextValue}>
       {children}
       {content && createPortal(<Modal>{content}</Modal>, document.body)}
     </ModalContext>
