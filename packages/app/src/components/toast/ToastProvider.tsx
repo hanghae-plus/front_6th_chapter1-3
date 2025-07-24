@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useReducer, useMemo, useCallback, type PropsWithChildren } from "react";
+import { createContext, useContext, useReducer, type PropsWithChildren } from "react";
+import { useAutoCallback, useMemo } from "@hanghae-plus/lib";
 import { createPortal } from "react-dom";
 import { Toast } from "./Toast";
 import { createActions, initialState, toastReducer, type ToastType } from "./toastReducer";
@@ -33,16 +34,13 @@ export const useToastState = () => useContext(ToastStateContext);
 export const ToastProvider = ({ children }: PropsWithChildren) => {
   const [state, dispatch] = useReducer(toastReducer, initialState);
 
-  const show = useCallback((...args: Parameters<ShowToast>) => createActions(dispatch).show(...args), [dispatch]);
-  const hide = useCallback(() => createActions(dispatch).hide(), [dispatch]);
+  const show = useAutoCallback((...args: Parameters<ShowToast>) => createActions(dispatch).show(...args));
+  const hide = useAutoCallback(() => createActions(dispatch).hide());
   const hideAfter = useMemo(() => debounce(hide, DEFAULT_DELAY), [hide]);
-  const showWithHide: ShowToast = useCallback(
-    (...args) => {
-      show(...args);
-      hideAfter();
-    },
-    [show, hideAfter],
-  );
+  const showWithHide: ShowToast = useAutoCallback((...args: Parameters<ShowToast>) => {
+    show(...args);
+    hideAfter();
+  });
 
   // 명령 context value
   const commandValue = useMemo(() => ({ show: showWithHide, hide }), [showWithHide, hide]);
