@@ -106,6 +106,110 @@ describe("Chapter 1-3 심화과제: 고급 hooks 구현하기 > ", () => {
 
       expect(result.current).toBe(null);
     });
+
+    it("같은 key로 생성된 다른 인스턴스들이 동기화되어야 한다", () => {
+      const storage1 = createStorage<string>("sync-test");
+      const storage2 = createStorage<string>("sync-test"); // 같은 key, 다른 인스턴스
+
+      const { result: result1 } = renderHook(() => useStorage(storage1));
+      const { result: result2 } = renderHook(() => useStorage(storage2));
+
+      expect(result1.current).toBe(null);
+      expect(result2.current).toBe(null);
+
+      // storage1에서 값 변경
+      act(() => storage1.set("from-storage1"));
+
+      // 두 인스턴스 모두 업데이트되어야 함
+      expect(result1.current).toBe("from-storage1");
+      expect(result2.current).toBe("from-storage1");
+
+      // storage2에서 값 변경
+      act(() => storage2.set("from-storage2"));
+
+      // 두 인스턴스 모두 업데이트되어야 함
+      expect(result1.current).toBe("from-storage2");
+      expect(result2.current).toBe("from-storage2");
+    });
+
+    it("다른 key들은 서로 독립적으로 동작해야 한다", () => {
+      const userStorage = createStorage<string>("user");
+      const settingsStorage = createStorage<string>("settings");
+
+      const { result: userResult } = renderHook(() => useStorage(userStorage));
+      const { result: settingsResult } = renderHook(() => useStorage(settingsStorage));
+
+      expect(userResult.current).toBe(null);
+      expect(settingsResult.current).toBe(null);
+
+      // user 변경 시 settings는 영향받지 않아야 함
+      act(() => userStorage.set("Alice"));
+
+      expect(userResult.current).toBe("Alice");
+      expect(settingsResult.current).toBe(null); // 변경되지 않음
+
+      // settings 변경 시 user는 영향받지 않아야 함
+      act(() => settingsStorage.set("dark-theme"));
+
+      expect(userResult.current).toBe("Alice"); // 변경되지 않음
+      expect(settingsResult.current).toBe("dark-theme");
+    });
+
+    it("외부에서 localStorage 직접 변경 시 감지해야 한다", () => {
+      const storage1 = createStorage<{ name: string }>("external-change-test");
+      const storage2 = createStorage<{ name: string }>("external-change-test");
+
+      const { result: result1 } = renderHook(() => useStorage(storage1));
+      const { result: result2 } = renderHook(() => useStorage(storage2));
+
+      // 초기값 설정
+      act(() => storage1.set({ name: "John" }));
+      expect(result1.current).toEqual({ name: "John" });
+      expect(result2.current).toEqual({ name: "John" });
+
+      act(() => {
+        const newData = { name: "Jane" };
+        localStorage.setItem("external-change-test", JSON.stringify(newData));
+
+        const customEvent = new CustomEvent("storage-inner-document", {
+          detail: {
+            key: "external-change-test",
+            oldValue: JSON.stringify({ name: "John" }),
+            newValue: JSON.stringify(newData),
+          },
+        });
+
+        window.dispatchEvent(customEvent);
+      });
+
+      expect(result1.current).toEqual({ name: "Jane" });
+      expect(result2.current).toEqual({ name: "Jane" });
+    });
+
+    it("다른 탭에서의 변경을 감지해야 한다 (storage 이벤트)", () => {
+      const storage = createStorage<{ theme: string }>("cross-tab-test");
+      const { result } = renderHook(() => useStorage(storage));
+
+      // 초기값 설정
+      act(() => storage.set({ theme: "light" }));
+      expect(result.current).toEqual({ theme: "light" });
+
+      act(() => {
+        const newData = { theme: "dark" };
+        localStorage.setItem("cross-tab-test", JSON.stringify(newData));
+
+        window.dispatchEvent(
+          new StorageEvent("storage", {
+            key: "cross-tab-test",
+            oldValue: JSON.stringify({ theme: "light" }),
+            newValue: JSON.stringify(newData),
+            storageArea: localStorage,
+          }),
+        );
+      });
+
+      expect(result.current).toEqual({ theme: "dark" });
+    });
   });
 
   describe("useStore 훅 테스트", () => {

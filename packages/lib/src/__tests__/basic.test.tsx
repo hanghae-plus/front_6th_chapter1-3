@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import React, { type ComponentProps, forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { act, fireEvent, render, renderHook } from "@testing-library/react";
 import { useCallback, useDeepMemo, useMemo, useRef, useShallowState } from "../hooks";
+import { useEffect as customUseEffect } from "../hooks/useEffect";
 import { deepEquals, shallowEquals } from "../equals";
 import { deepMemo, memo } from "../hocs";
 import { useAutoCallback } from "../hooks/useAutoCallback.ts";
@@ -825,6 +826,133 @@ describe("Chapter 1-3 기본과제: hooks 구현하기 > ", () => {
           rerender(<DeepMemoizedComponent value={[1, [2, 4]]} />);
           expect(TestComponent).toHaveBeenCalledTimes(2); // 값이 변경되어 리렌더링
         });
+      });
+    });
+
+    describe("useEffect 훅", () => {
+      it("첫 렌더링 시 이펙트가 실행되어야 한다", () => {
+        const effectSpy = vi.fn();
+
+        const TestComponent = () => {
+          customUseEffect(effectSpy, []);
+          return null;
+        };
+
+        render(<TestComponent />);
+        expect(effectSpy).toHaveBeenCalledTimes(1);
+      });
+
+      it("의존성 배열이 변경될 때만 이펙트가 재실행되어야 한다", () => {
+        const effectSpy = vi.fn();
+        let count = 0;
+
+        const TestComponent = ({ value }: { value: number }) => {
+          customUseEffect(() => {
+            effectSpy();
+            count++;
+          }, [value]);
+          return <div>{count}</div>;
+        };
+
+        const { rerender } = render(<TestComponent value={1} />);
+        expect(effectSpy).toHaveBeenCalledTimes(1);
+
+        // 같은 값으로 리렌더링 - 이펙트 재실행 안됨
+        rerender(<TestComponent value={1} />);
+        expect(effectSpy).toHaveBeenCalledTimes(1);
+
+        // 다른 값으로 리렌더링 - 이펙트 재실행됨
+        rerender(<TestComponent value={2} />);
+        expect(effectSpy).toHaveBeenCalledTimes(2);
+      });
+
+      it("의존성 배열이 없으면 매 렌더링마다 이펙트가 실행되어야 한다", () => {
+        const effectSpy = vi.fn();
+        let renderCount = 0;
+
+        const TestComponent = ({ trigger: _trigger }: { trigger: number }) => {
+          customUseEffect(() => {
+            effectSpy();
+            renderCount++;
+          });
+          return <div>{renderCount}</div>;
+        };
+        const { rerender } = render(<TestComponent trigger={1} />);
+        expect(effectSpy).toHaveBeenCalledTimes(1);
+
+        rerender(<TestComponent trigger={2} />);
+        expect(effectSpy).toHaveBeenCalledTimes(2);
+
+        rerender(<TestComponent trigger={3} />);
+        expect(effectSpy).toHaveBeenCalledTimes(3);
+      });
+
+      it("cleanup 함수가 다음 이펙트 실행 전에 호출되어야 한다", () => {
+        const effectSpy = vi.fn();
+        const cleanupSpy = vi.fn();
+
+        const TestComponent = ({ value }: { value: number }) => {
+          customUseEffect(() => {
+            effectSpy(value);
+            return () => cleanupSpy(value);
+          }, [value]);
+          return <div>{value}</div>;
+        };
+
+        const { rerender } = render(<TestComponent value={1} />);
+        expect(effectSpy).toHaveBeenCalledWith(1);
+        expect(cleanupSpy).not.toHaveBeenCalled();
+
+        // 값 변경 시 이전 cleanup이 먼저 호출되고 새 이펙트 실행
+        rerender(<TestComponent value={2} />);
+        expect(cleanupSpy).toHaveBeenCalledWith(1);
+        expect(effectSpy).toHaveBeenCalledWith(2);
+      });
+
+      it("복잡한 의존성 배열도 올바르게 비교해야 한다", () => {
+        const effectSpy = vi.fn();
+
+        const TestComponent = ({ obj, arr }: { obj: object; arr: number[] }) => {
+          customUseEffect(() => {
+            effectSpy();
+          }, [obj, arr]);
+          return null;
+        };
+
+        const obj1 = { a: 1 };
+        const arr1 = [1, 2, 3];
+
+        const { rerender } = render(<TestComponent obj={obj1} arr={arr1} />);
+        expect(effectSpy).toHaveBeenCalledTimes(1);
+
+        // 같은 참조로 리렌더링 - 이펙트 재실행 안됨
+        rerender(<TestComponent obj={obj1} arr={arr1} />);
+        expect(effectSpy).toHaveBeenCalledTimes(1);
+
+        // 다른 참조로 리렌더링 - 이펙트 재실행됨
+        const obj2 = { a: 1 };
+        rerender(<TestComponent obj={obj2} arr={arr1} />);
+        expect(effectSpy).toHaveBeenCalledTimes(2);
+      });
+
+      it("빈 의존성 배열이면 첫 렌더링에만 실행되어야 한다", () => {
+        const effectSpy = vi.fn();
+
+        const TestComponent = ({ trigger }: { trigger: number }) => {
+          customUseEffect(() => {
+            effectSpy();
+          }, []); // 빈 의존성 배열
+          return <div>{trigger}</div>;
+        };
+
+        const { rerender } = render(<TestComponent trigger={1} />);
+        expect(effectSpy).toHaveBeenCalledTimes(1);
+
+        rerender(<TestComponent trigger={2} />);
+        expect(effectSpy).toHaveBeenCalledTimes(1); // 여전히 1번만
+
+        rerender(<TestComponent trigger={3} />);
+        expect(effectSpy).toHaveBeenCalledTimes(1); // 여전히 1번만
       });
     });
   });
