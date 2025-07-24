@@ -12,18 +12,21 @@ export const useShallowState = <T>(initialValue: Parameters<typeof useState<T>>[
   // 실제로 값이 변경되었을 때만 함수가 실행되게
   // 근데 newSetter 쓰면 매번 새로운 함수가 호출되어서 (마지막 테스트 실패)
   // useCallback으로 함수를 메모이제이션
-  const newSetter = useCallback((newValue: Parameters<typeof useState<T>>[0]) => {
-    // 여기에서 shallowEquals 검사
-    // 정말 바뀌었을 때만 setValue 호출
+  const newSetter = useCallback(
+    (newValue: Parameters<typeof useState<T>>[0]) => {
+      // 여기에서 shallowEquals 검사
+      // 정말 바뀌었을 때만 setValue 호출
 
-    setValue((currentValue) => {
-      if (!shallowEquals(value, newValue)) {
-        return newValue;
-      }
+      setValue((currentValue) => {
+        if (!shallowEquals(value, newValue)) {
+          return newValue;
+        }
 
-      return currentValue;
-    });
-  }, []);
+        return currentValue;
+      });
+    },
+    [value],
+  );
 
   return [value, newSetter];
 };
