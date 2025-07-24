@@ -1,4 +1,10 @@
 export const deepEquals = (a: unknown, b: unknown): boolean => {
+  // null 체크
+  if (a === null || b === null) return a === b;
+
+  // 타입이 다르면 다름
+  if (typeof a !== typeof b) return false;
+
   // 배열 비교
   if (Array.isArray(a) && Array.isArray(b)) {
     if (a.length !== b.length) return false;
@@ -6,7 +12,7 @@ export const deepEquals = (a: unknown, b: unknown): boolean => {
   }
 
   // 객체 비교
-  if (typeof a === "object" && typeof b === "object" && a !== null && b !== null) {
+  if (typeof a === "object") {
     const objA = a as Record<string, unknown>;
     const objB = b as Record<string, unknown>;
     const keysA = Object.keys(objA);

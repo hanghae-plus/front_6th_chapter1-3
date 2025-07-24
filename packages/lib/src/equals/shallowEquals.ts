@@ -1,4 +1,8 @@
 export const shallowEquals = (a: unknown, b: unknown) => {
+  // null 체크
+  if (a === null || b === null) return a === b;
+
+  // 타입이 다르면 다름
   if (typeof a !== typeof b) return false;
 
   // 배열 비교
