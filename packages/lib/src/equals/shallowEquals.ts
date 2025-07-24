@@ -1,8 +1,4 @@
-// 타입 가드 함수들
-const isNullish = (value: unknown): value is null | undefined => value == null;
-const isArray = (value: unknown): value is unknown[] => Array.isArray(value);
-const isObject = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
-const isSameValue = (a: unknown, b: unknown) => a === b;
+import { isNullish, isArray, isObject, isSameValue } from "./utils";
 
 // 배열 비교 함수
 const compareArrays = (a: unknown[], b: unknown[]): boolean =>

@@ -1,15 +1,17 @@
+import { isNullish, isArray, isObject, isSameValue } from "./utils";
+
 export const deepEquals = (a: unknown, b: unknown): boolean => {
   // 기본 타입 비교
-  if (a === b) return true;
+  if (isSameValue(a, b)) return true;
 
   // null/undefined 체크
-  if (a == null || b == null) return a === b;
+  if (isNullish(a) || isNullish(b)) return a === b;
 
   // 타입이 다른 경우
   if (typeof a !== typeof b) return false;
 
   // 배열 비교
-  if (Array.isArray(a) && Array.isArray(b)) {
+  if (isArray(a) && isArray(b)) {
     if (a.length !== b.length) return false;
     for (let i = 0; i < a.length; i++) {
       if (!deepEquals(a[i], b[i])) return false;
@@ -18,7 +20,7 @@ export const deepEquals = (a: unknown, b: unknown): boolean => {
   }
 
   // 객체 비교
-  if (typeof a === "object" && typeof b === "object") {
+  if (isObject(a) && isObject(b)) {
     const keysA = Object.keys(a as Record<string, unknown>);
     const keysB = Object.keys(b as Record<string, unknown>);
 
