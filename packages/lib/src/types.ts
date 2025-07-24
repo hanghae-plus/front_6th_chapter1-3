@@ -3,3 +3,5 @@ export type StringRecord = Record<string, string>;
 export type AnyFunction = (...args: any[]) => any;
 
 export type Selector<T, S = T> = (state: T) => S;
+
+export type ObjectType = Record<string, unknown>;

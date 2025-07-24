@@ -1,4 +1,11 @@
-export function useRef<T>(initialValue: T): { current: T } {
-  // useState를 이용해서 만들어보세요.
-  return { current: initialValue };
+import { useState } from "react";
+
+type Ref<T> = { current: T };
+
+export function useRef<T>(initialValue: T | null): Ref<T | null> {
+  const [ref] = useState<Ref<T | null>>(() => ({
+    current: initialValue,
+  }));
+
+  return ref;
 }

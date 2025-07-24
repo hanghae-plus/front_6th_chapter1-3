@@ -1,7 +1,26 @@
-import { useState } from "react";
+import { type SetStateAction, useCallback, useState } from "react";
 import { shallowEquals } from "../equals";
 
-export const useShallowState = <T>(initialValue: Parameters<typeof useState<T>>[0]) => {
-  // useState를 사용하여 상태를 관리하고, shallowEquals를 사용하여 상태 변경을 감지하는 훅을 구현합니다.
-  return useState(initialValue);
+const isUpdater = <T>(value: SetStateAction<T>): value is (prev: T) => T => {
+  return typeof value === "function";
+};
+
+export const useShallowState = <T>(initialValue: T) => {
+  const [state, setState] = useState(initialValue);
+
+  const setStateWithShallowEquals = useCallback((value: SetStateAction<T>) => {
+    if (isUpdater(value)) {
+      setState((prev) => {
+        const next = value(prev);
+        return shallowEquals(prev, next) ? prev : next;
+      });
+      return;
+    }
+
+    if (!shallowEquals(state, value)) {
+      setState(value);
+    }
+  }, []);
+
+  return [state, setStateWithShallowEquals] as const;
 };
