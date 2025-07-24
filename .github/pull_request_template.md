@@ -2,6 +2,8 @@
 
 ### 배포 링크
 
+https://hwirin-kim.github.io/front_6th_chapter1-3/
+
 <!--
 배포 링크를 적어주세요
 예시: https://<username>.github.io/front-6th-chapter1-3/
@@ -14,40 +16,42 @@
 
 #### equalities
 
-- [ ] shallowEquals 구현 완료
-- [ ] deepEquals 구현 완료
+- [x] shallowEquals 구현 완료
+- [x] deepEquals 구현 완료
 
 #### hooks
 
-- [ ] useRef 구현 완료
-- [ ] useMemo 구현 완료
-- [ ] useCallback 구현 완료
-- [ ] useDeepMemo 구현 완료
-- [ ] useShallowState 구현 완료
-- [ ] useAutoCallback 구현 완료
+- [x] useRef 구현 완료
+- [x] useMemo 구현 완료
+- [x] useCallback 구현 완료
+- [x] useDeepMemo 구현 완료
+- [x] useShallowState 구현 완료
+- [x] useAutoCallback 구현 완료
 
 #### High Order Components
 
-- [ ] memo 구현 완료
-- [ ] deepMemo 구현 완료
+- [x] memo 구현 완료
+- [x] deepMemo 구현 완료
 
 ### 심화 과제
 
 #### hooks
 
-- [ ] createObserver를 useSyncExternalStore에 사용하기 적합한 코드로 개선
-- [ ] useShallowSelector 구현
-- [ ] useStore 구현
-- [ ] useRouter 구현
-- [ ] useStorage 구현
+- [x] createObserver를 useSyncExternalStore에 사용하기 적합한 코드로 개선
+- [x] useShallowSelector 구현
+- [x] useStore 구현
+- [x] useRouter 구현
+- [x] useStorage 구현
 
 ### context
 
-- [ ] ToastContext, ModalContext 개선
+- [x] ToastContext, ModalContext 개선
 
 ## 과제 셀프회고
 
 <!-- 과제에 대한 회고를 작성해주세요 -->
+
+이번 과제에서는 여러가지 리액트 훅을 만들어보았다.
 
 ### 기술적 성장
 
@@ -142,7 +146,7 @@
 
 과제에서 디테일한 피드백을 받기 위해선 여러분의 생각을 디테일하게 표현해주셔야 한답니다.
 
-가령, "전반적으로 이 라우터 구조가 규모가 커졌을 때 유지보수나 기능 확장에 유리한지, 아니면 리팩토링이 필요할지 조언을 받고 싶습니다" 라는 질문이 있을 때, 답변드리기가 어려워요. 
+가령, "전반적으로 이 라우터 구조가 규모가 커졌을 때 유지보수나 기능 확장에 유리한지, 아니면 리팩토링이 필요할지 조언을 받고 싶습니다" 라는 질문이 있을 때, 답변드리기가 어려워요.
 이럴 때는 "기능 확장" 상황을 먼저 가정해봐야합니다. 테스트의 엣지케이스를 작성하는 것 처럼요! 그리고 그 상황에 대해 내가 작성한 코드가 이러저러한 이유 때문에 대응가능할 것 같은데 혹시 더 고려해야할 부분이 있을지를 물어보는거죠.
 
 이건 코치에게 이야기할 때 뿐만 아니라 팀원에게 이야기할 때에도 동일해요. 여러분의 컨텍스트를 명확하게 전달하지 않으면 여러분과 이야기할 때 시간이 무척 오래 걸린답니다.

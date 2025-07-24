@@ -5,3 +5,8 @@ export function useRef<T>(initialValue: T): { current: T } {
   const [ref] = useState({ current: initialValue });
   return ref;
 }
+
+// export function useRef<T>(initialValue: T): { current: T } {
+//   let ref = { current: initialValue };
+//   return ref;
+// }

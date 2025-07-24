@@ -17,7 +17,7 @@ export const useRouter = <T extends RouterInstance<AnyFunction>, S>(router: T, s
   // getSnapshot에 최적화된 selector 함수를 전달하여 불필요한 리렌더링 방지
   const state = useSyncExternalStore((onStoreChange) => {
     router.subscribe(onStoreChange);
-    return () => {};
+    return () => router.unsubscribe(onStoreChange);
   }, getSnapshot);
 
   return state;
