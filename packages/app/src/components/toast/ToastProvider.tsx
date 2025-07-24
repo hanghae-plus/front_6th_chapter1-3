@@ -1,52 +1,60 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, memo, type PropsWithChildren, useContext, useReducer } from "react";
+import { useAutoCallback, useMemo } from "@hanghae-plus/lib/src/hooks";
+import { memo, useReducer, useState } from "react";
 import { createPortal } from "react-dom";
-import { Toast } from "./Toast";
-import { createActions, initialState, toastReducer, type ToastType } from "./toastReducer";
 import { debounce } from "../../utils";
+import { createSafeContext } from "../../utils/createSafeContext";
+import { Toast } from "./Toast";
+import { type ToastType, createActions, initialState, toastReducer } from "./toastReducer";
+
+const DEFAULT_DELAY = 3000;
 
 type ShowToast = (message: string, type: ToastType) => void;
 type Hide = () => void;
 
-const ToastContext = createContext<{
-  message: string;
-  type: ToastType;
-  show: ShowToast;
-  hide: Hide;
-}>({
-  ...initialState,
-  show: () => null,
-  hide: () => null,
-});
+interface Props {
+  children: React.ReactNode;
+}
 
-const DEFAULT_DELAY = 3000;
-
-const useToastContext = () => useContext(ToastContext);
-export const useToastCommand = () => {
-  const { show, hide } = useToastContext();
-  return { show, hide };
-};
-export const useToastState = () => {
-  const { message, type } = useToastContext();
-  return { message, type };
-};
-
-export const ToastProvider = memo(({ children }: PropsWithChildren) => {
+export const ToastProvider = memo(({ children }: Props) => {
   const [state, dispatch] = useReducer(toastReducer, initialState);
   const { show, hide } = createActions(dispatch);
+
   const visible = state.message !== "";
 
-  const hideAfter = debounce(hide, DEFAULT_DELAY);
+  const hideAfter = useMemo(() => debounce(hide, DEFAULT_DELAY), [hide]);
 
-  const showWithHide: ShowToast = (...args) => {
+  const showWithHide: ShowToast = useAutoCallback((...args) => {
     show(...args);
     hideAfter();
-  };
+  });
+
+  const [command] = useState(() => ({
+    show: showWithHide,
+    hide,
+  }));
 
   return (
-    <ToastContext value={{ show: showWithHide, hide, ...state }}>
-      {children}
-      {visible && createPortal(<Toast />, document.body)}
-    </ToastContext>
+    <ToastStateProvider {...state}>
+      <ToastCommandProvider {...command}>
+        {children}
+        {visible && createPortal(<Toast />, document.body)}
+      </ToastCommandProvider>
+    </ToastStateProvider>
   );
 });
+
+interface ContextState {
+  message: string;
+  type: ToastType;
+}
+
+interface ContextCommand {
+  show: ShowToast;
+  hide: Hide;
+}
+
+export const [ToastStateProvider, useToastState] =
+  createSafeContext<ContextState>("ToastStateProvider");
+export const [ToastCommandProvider, useToastCommand] =
+  createSafeContext<ContextCommand>("ToastCommandProvider");

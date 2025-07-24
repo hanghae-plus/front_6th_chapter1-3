@@ -1,3 +1,5 @@
-export const shallowEquals = (a: unknown, b: unknown) => {
-  return a === b;
-};
+import { deepEquals } from "./deepEquals";
+
+export function shallowEquals<T>(a: T, b: T) {
+  return deepEquals(a, b, 1);
+}
