@@ -8,7 +8,7 @@
   },
   "type": "module",
   "scripts": {
-    "dev": "source ~/.nvm/nvm.sh && nvm use && pnpm -F @hanghae-plus/shopping dev",
+    "dev": "pnpm -F @hanghae-plus/shopping dev",
     "build": "pnpm run -r build",
     "lint:fix": "pnpm run -r lint:fix",
     "tsc": "pnpm run -r tsc",
