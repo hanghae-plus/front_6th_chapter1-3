@@ -4,49 +4,65 @@ import { createPortal } from "react-dom";
 import { Toast } from "./Toast";
 import { createActions, initialState, toastReducer, type ToastType } from "./toastReducer";
 import { debounce } from "../../utils";
+import { useMemo, useAutoCallback } from "@hanghae-plus/lib/src/hooks";
 
 type ShowToast = (message: string, type: ToastType) => void;
 type Hide = () => void;
 
-const ToastContext = createContext<{
+// 불필요한 리렌더링을 방지하기 위해 상태와 명령을 각각 분리함
+const ToastStateContext = createContext<{
   message: string;
   type: ToastType;
+}>(initialState);
+
+const ToastCommandContext = createContext<{
   show: ShowToast;
   hide: Hide;
 }>({
-  ...initialState,
   show: () => null,
   hide: () => null,
 });
 
 const DEFAULT_DELAY = 3000;
 
-const useToastContext = () => useContext(ToastContext);
-export const useToastCommand = () => {
-  const { show, hide } = useToastContext();
-  return { show, hide };
-};
-export const useToastState = () => {
-  const { message, type } = useToastContext();
-  return { message, type };
-};
+export const useToastState = () => useContext(ToastStateContext);
+export const useToastCommand = () => useContext(ToastCommandContext);
 
 export const ToastProvider = memo(({ children }: PropsWithChildren) => {
   const [state, dispatch] = useReducer(toastReducer, initialState);
-  const { show, hide } = createActions(dispatch);
+  // show, hide를 useAutoCallback으로 메모이제이션
+  const show = useAutoCallback((message: string, type: ToastType) => createActions(dispatch).show(message, type));
+  const hide = useAutoCallback(() => createActions(dispatch).hide());
   const visible = state.message !== "";
 
-  const hideAfter = debounce(hide, DEFAULT_DELAY);
+  const hideAfter = useMemo(() => debounce(hide, DEFAULT_DELAY), [hide]);
 
-  const showWithHide: ShowToast = (...args) => {
+  const showWithHide: ShowToast = useAutoCallback((...args) => {
     show(...args);
     hideAfter();
-  };
+  });
+
+  // 상태와 명령을 각각 분리하여 context value 생성
+  const stateValue = useMemo(
+    () => ({
+      message: state.message,
+      type: state.type,
+    }),
+    [state.message, state.type],
+  );
+
+  const commandValue = useMemo(
+    () => ({
+      show: showWithHide,
+      hide,
+    }),
+    [showWithHide, hide],
+  );
 
   return (
-    <ToastContext value={{ show: showWithHide, hide, ...state }}>
+    <ToastCommandContext value={commandValue}>
       {children}
-      {visible && createPortal(<Toast />, document.body)}
-    </ToastContext>
+      <ToastStateContext value={stateValue}>{visible && createPortal(<Toast />, document.body)}</ToastStateContext>
+    </ToastCommandContext>
   );
 });
