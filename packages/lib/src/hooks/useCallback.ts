@@ -2,9 +2,7 @@ import type { DependencyList } from "react";
 import { useRef } from "./useRef";
 import { shallowEquals } from "../equals";
 
-type AnyFunction = (...args: unknown[]) => unknown;
-
-export function useCallback<T extends AnyFunction>(factory: T, deps: DependencyList): T {
+export function useCallback<T>(factory: T, deps: DependencyList): T {
   const callbackRef = useRef<T>(factory);
   const depsRef = useRef<DependencyList>(deps);
 
