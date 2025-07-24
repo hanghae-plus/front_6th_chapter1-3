@@ -12,7 +12,10 @@
     "tsc": "tsc --noEmit",
     "lint:fix": "eslint --fix",
     "prettier:write": "prettier --write ./src",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:prod": "NODE_ENV=production vite build",
+    "preview:prod": "NODE_ENV=production vite preview",
+    "deploy": "pnpm build:prod && pnpm preview:prod"
   },
   "dependencies": {
     "react": "latest",
