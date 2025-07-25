@@ -1,9 +1,9 @@
-import { useToastCommand } from "../../../components";
+import { useToastAction } from "../../../components";
 import { useAutoCallback } from "@hanghae-plus/lib";
 import { clearCart, removeSelectedFromCart } from "../cartUseCase";
 
 export const useCartRemoveCommands = () => {
-  const toast = useToastCommand();
+  const toast = useToastAction();
 
   const removeSelected = useAutoCallback(() => {
     removeSelectedFromCart();

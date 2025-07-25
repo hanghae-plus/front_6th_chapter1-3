@@ -1,7 +1,7 @@
 import { type ChangeEvent, memo } from "react";
 import { CartItem as OriginCartItem } from "./CartItem";
 import { deselectAllCart, selectAllCart } from "../cartUseCase";
-import { Modal, PublicImage, useToastCommand } from "../../../components";
+import { Modal, PublicImage, useToastAction } from "../../../components";
 import type { Cart } from "../types";
 import { useCartRemoveCommands, useCartStoreSelector } from "../hooks";
 
@@ -34,7 +34,7 @@ export function CartModal() {
   const selectedCount = useCartStoreSelector(selectSelectedCount);
   const selectedAmount = useCartStoreSelector(selectSelectedAmount);
   const selectedAll = useCartStoreSelector(selectSelectedAll);
-  const toast = useToastCommand();
+  const toast = useToastAction();
   const commands = useCartRemoveCommands();
   const checkout = () => toast.show("구매 기능은 추후 구현 예정입니다.", "info");
 

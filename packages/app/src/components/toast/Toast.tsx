@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { useToastCommand, useToastState } from "./ToastProvider";
+import { useToastAction, useToastState } from "./ToastProvider";
 import { PublicImage } from "../PublicImage";
 import type { ToastType } from "./toastReducer";
 
@@ -18,7 +18,7 @@ const Icons: Record<ToastType, ReactNode> = {
 
 export function Toast() {
   const { type, message } = useToastState();
-  const { hide } = useToastCommand();
+  const { hide } = useToastAction();
 
   const bg = Colors[type];
   const icon = Icons[type];
