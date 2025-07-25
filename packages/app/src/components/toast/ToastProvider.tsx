@@ -1,9 +1,10 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, memo, type PropsWithChildren, useContext, useReducer } from "react";
+import { useAutoCallback } from "@hanghae-plus/lib";
+import { createContext, memo, type PropsWithChildren, useContext, useMemo, useReducer } from "react";
 import { createPortal } from "react-dom";
+import { debounce } from "../../utils";
 import { Toast } from "./Toast";
 import { createActions, initialState, toastReducer, type ToastType } from "./toastReducer";
-import { debounce } from "../../utils";
 
 type ShowToast = (message: string, type: ToastType) => void;
 type Hide = () => void;
@@ -11,10 +12,14 @@ type Hide = () => void;
 const ToastContext = createContext<{
   message: string;
   type: ToastType;
+}>({
+  ...initialState,
+});
+
+const ToastCommandContext = createContext<{
   show: ShowToast;
   hide: Hide;
 }>({
-  ...initialState,
   show: () => null,
   hide: () => null,
 });
@@ -22,8 +27,10 @@ const ToastContext = createContext<{
 const DEFAULT_DELAY = 3000;
 
 const useToastContext = () => useContext(ToastContext);
+const useToastCommandContext = () => useContext(ToastCommandContext);
+
 export const useToastCommand = () => {
-  const { show, hide } = useToastContext();
+  const { show, hide } = useToastCommandContext();
   return { show, hide };
 };
 export const useToastState = () => {
@@ -33,20 +40,24 @@ export const useToastState = () => {
 
 export const ToastProvider = memo(({ children }: PropsWithChildren) => {
   const [state, dispatch] = useReducer(toastReducer, initialState);
-  const { show, hide } = createActions(dispatch);
+  const { show, hide } = useMemo(() => createActions(dispatch), [dispatch]);
   const visible = state.message !== "";
 
-  const hideAfter = debounce(hide, DEFAULT_DELAY);
+  const hideAfter = useMemo(() => debounce(hide, DEFAULT_DELAY), [hide]);
 
-  const showWithHide: ShowToast = (...args) => {
+  const showWithHide: ShowToast = useAutoCallback((...args) => {
     show(...args);
     hideAfter();
-  };
+  });
+
+  const command = useMemo(() => ({ show: showWithHide, hide }), [showWithHide, hide]);
 
   return (
-    <ToastContext value={{ show: showWithHide, hide, ...state }}>
-      {children}
-      {visible && createPortal(<Toast />, document.body)}
-    </ToastContext>
+    <ToastCommandContext.Provider value={command}>
+      <ToastContext.Provider value={state}>
+        {children}
+        {visible && createPortal(<Toast />, document.body)}
+      </ToastContext.Provider>
+    </ToastCommandContext.Provider>
   );
 });
