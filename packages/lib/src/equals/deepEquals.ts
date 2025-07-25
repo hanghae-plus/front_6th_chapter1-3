@@ -1,4 +1,4 @@
-import { isObject } from "./util";
+import { compareObject, isObject } from "./util";
 
 /**
  * 두 값의 깊은 비교 결과를 반환
@@ -16,9 +16,5 @@ export const deepEquals = (a: unknown, b: unknown): boolean => {
   //    - 재귀적으로 각 속성에 대해 deepEquals 호출
   if (!isObject(a) || !isObject(b)) return false;
 
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-  if (keysA.length !== keysB.length) return false;
-
-  return keysA.every((key) => deepEquals(a[key], b[key]));
+  return compareObject(a, b, deepEquals);
 };
