@@ -7,15 +7,21 @@ export function useShallowState<T>(initialValue: T | (() => T)): [T, React.Dispa
 
   const setShallowState = useCallback((newValue: T | ((prev: T) => T)) => {
     setState((prevState) => {
-      const nextState = typeof newValue === "function" ? (newValue as (prev: T) => T)(prevState) : newValue;
-      // 1. 얕은 비교 값이 같다면 이전 상태 반환
+      const nextState = isFunction(newValue) ? newValue(prevState) : newValue;
+
+      // 1. 얕은 비교로 값이 같다면 이전 상태 반환
       if (shallowEquals(nextState, prevState)) {
         return prevState;
       }
+
       // 2. 값이 다르다면 새로운 상태 반환
       return nextState;
     });
   }, []);
 
   return [state, setShallowState];
+}
+
+function isFunction<T>(value: T | ((prev: T) => T)): value is (prev: T) => T {
+  return typeof value === "function";
 }
