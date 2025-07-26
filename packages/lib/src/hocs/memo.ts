@@ -7,6 +7,7 @@ export function memo<P extends object>(Component: FunctionComponent<P>, equals =
   const MemoizedComponent = (props: P) => {
     //1. prevRef
     const prevRef = useRef<{ props: P; component: ReactNode | Promise<ReactNode> } | null>(null);
+    //TODO: createElement로 써보기
     if (prevRef.current === null || !equals(prevRef.current.props, props)) {
       prevRef.current = { props, component: Component(props) as ReactNode };
     }
