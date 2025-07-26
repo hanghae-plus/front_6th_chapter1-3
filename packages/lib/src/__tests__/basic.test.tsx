@@ -34,6 +34,27 @@ describe("Chapter 1-3 기본과제: hooks 구현하기 > ", () => {
         expect(shallowEquals({ a: 1, b: 2 }, { a: 1, b: 2 })).toBe(true);
         expect(shallowEquals({ a: 1, b: 2 }, { b: 2, a: 1 })).toBe(true);
         expect(shallowEquals({ a: 1, b: 2 }, { a: 1, b: 3 })).toBe(false);
+
+        const date = new Date("2023-01-01");
+        const obj = { getTime: () => new Date("2023-01-01").getTime() };
+        expect(shallowEquals(date, obj)).toBe(false); // 생성자 비교
+
+        const dateA = new Date("2023-01-01T00:00:00Z");
+        const dateB = new Date("2023-01-01T00:00:00Z");
+        expect(shallowEquals(dateA, dateB)).toBe(false); // 다른 Date 참조
+
+        const regexA = /abc/gi;
+        const regexB = new RegExp("abc", "gi");
+        expect(shallowEquals(regexA, regexB)).toBe(true); // 정규식 내용이 같음
+
+        const functionA = () => {
+          console.log("펑션A입니다.");
+        };
+        const functionB = () => {
+          alert("알럿 발생");
+        };
+        expect(shallowEquals(functionA, functionB)).toBe(false); // 내부 동작이 다름
+
         const obj1 = { a: {} };
         const obj2 = { a: {} };
         expect(shallowEquals(obj1, obj2)).toBe(false); // 다른 객체 참조
